@@ -3,7 +3,7 @@
 
 int main()
 {
-    std::ofstream file("new.ppm");
+    std::ofstream file("xddd.ppm");
     file << "P3\n" << 256 << ' ' << 256 << "\n255\n";
 
     for (int i = 0; i < 256; i++) {
