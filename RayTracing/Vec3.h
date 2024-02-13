@@ -8,13 +8,13 @@ public:
 
 	Vec3(double x, double y, double z);
 	Vec3(const Vec3& vec);
-	Vec3 operator+(Vec3& vec) const;
-	Vec3 operator-(Vec3& vec) const;
-	Vec3 operator*(double c) const;
-	Vec3 operator/(double c) const;
-	double dot(Vec3& vec) const;
-	Vec3 cross(Vec3& vec) const;
+	Vec3 operator+(const Vec3& vec) const;
+	Vec3 operator-(const Vec3& vec) const;
+	Vec3 operator*(const double c) const;
+	Vec3 operator/(const double c) const;
+	double dot(const Vec3& vec) const;
+	Vec3 cross(const Vec3& vec) const;
 	double mag() const;
-	static Vec3 normalize(Vec3 &vec);
+	static Vec3 normalize(const Vec3 &vec);
 };
 
