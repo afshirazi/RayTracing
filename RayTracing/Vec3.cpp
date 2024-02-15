@@ -1,7 +1,15 @@
 #include "Vec3.h"
-#include <math.h>
+#include <cmath>
 
-Vec3::Vec3(double xx, double yy, double zz) {
+Vec3::Vec3()
+{
+	x = 0;
+	y = 0;
+	z = 0;
+}
+
+Vec3::Vec3(double xx, double yy, double zz) 
+{
 	x = xx;
 	y = yy;
 	z = zz;
@@ -12,7 +20,7 @@ Vec3::Vec3(const Vec3& vec)
 	Vec3(vec.x, vec.y, vec.z);
 }
 
-Vec3 Vec3::operator+(const Vec3 & vec) const
+Vec3 Vec3::operator+(const Vec3& vec) const
 {
 	return Vec3(x + vec.x, y + vec.y, z + vec.z);
 }
@@ -32,6 +40,20 @@ Vec3 Vec3::operator/(double c) const
 	return Vec3(x / c, y / c, z / c);
 }
 
+bool Vec3::operator==(const Vec3& v2) const
+{
+	if (x == v2.x && y == v2.y && z == v2.z)
+		return true;
+	return false;
+}
+
+bool Vec3::operator!=(const Vec3& v2) const
+{
+	if (x == v2.x && y == v2.y && z == v2.z)
+		return false;
+	return true;
+}
+
 double Vec3::dot(const Vec3& vec) const
 {
 	return x * vec.x + y * vec.y + z * vec.z;
@@ -47,7 +69,7 @@ Vec3 Vec3::cross(const Vec3& vec) const
 
 double Vec3::mag() const
 {
-	return sqrt(x * x + y * y + z * z);
+	return std::sqrt(x * x + y * y + z * z);
 }
 
 Vec3 Vec3::normalize(const Vec3& vec)
