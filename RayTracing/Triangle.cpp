@@ -8,6 +8,10 @@ Triangle::Triangle()
 	b = Vec3(-0.5, 0, 0);
 	c = Vec3(0.5, 0, 0);
 	color = Vec3(0, 0, 0);
+
+	diff = Vec3(0, 0, 0);
+	spec = Vec3(0, 0, 0);
+	shin = 0;
 }
 
 Triangle::Triangle(const Vec3& aa, const Vec3& bb, const Vec3& cc, const Vec3& col)
@@ -16,6 +20,10 @@ Triangle::Triangle(const Vec3& aa, const Vec3& bb, const Vec3& cc, const Vec3& c
 	b = bb;
 	c = cc;
 	color = col;
+
+	diff = Vec3(0.2, 0.2, 0.2);
+	spec = Vec3(0.7, 0.7, 0.7);
+	shin = 10;
 }
 
 Vec3 Triangle::get_normal() const

@@ -7,6 +7,10 @@ Circle::Circle()
 	center = Vec3(0, 0, 0);
 	color = Vec3(0, 0, 0);
 	radius = 1;
+
+    diff = Vec3(0, 0, 0);
+    spec = Vec3(0, 0, 0);
+    shin = 0;
 }
 
 Circle::Circle(const Vec3& cent, const Vec3& col, double rad)
@@ -14,6 +18,10 @@ Circle::Circle(const Vec3& cent, const Vec3& col, double rad)
 	center = cent;
 	color = col;
 	radius = rad;
+
+    diff = Vec3(0.2, 0.2, 0.2);
+    spec = Vec3(0.7, 0.7, 0.7);
+    shin = 10;
 }
 
 Circle::Circle(double x, double y, double z, double r, double g, double b, double rad)

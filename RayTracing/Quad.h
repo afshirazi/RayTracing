@@ -15,7 +15,7 @@ public:
 	Vec3 color;
 	Vec3 diff;
 	Vec3 spec;
-	Vec3 shin;
+	double shin;
 
 	Quad();
 	Quad(const Vec3& a, const Vec3& b, const Vec3& c, const Vec3& d, const Vec3& col);

@@ -9,7 +9,7 @@ public:
 	double radius;
 	Vec3 diff;
 	Vec3 spec;
-	Vec3 shin;
+	double shin;
 	
 	Circle();
 	Circle(const Vec3& vec, const Vec3& col, double rad);
