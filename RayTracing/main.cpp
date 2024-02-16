@@ -43,7 +43,6 @@ Vec3 get_color(const Vec3 *ray, const Vec3 *origin)
         if (intr != Vec3(-1,-1,-1))
         {
             intersect = true;
-            circle->get_intersect(*ray, *origin);
             if (intr.z > zBuf)
             {
                 zBuf = intr.z;
