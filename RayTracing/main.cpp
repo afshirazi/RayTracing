@@ -84,7 +84,7 @@ Vec3 get_color(const Vec3 *ray, const Vec3 *origin)
         Vec3 view_vec = *origin - *ray;
         for (Light* light : lights)
         {
-            Vec3 light_vec = light->pos - intr;
+            Vec3 light_vec = Vec3::normalize(light->pos - intr);
             Vec3 light_refl = Vec3::normalize(norm * (2 * norm.dot(light_vec)) - light_vec);
             color.x += light->diff.x * (light_vec.dot(norm)) * cir.diff.x + light->spec.x * std::pow(light_refl.dot(view_vec), cir.shin);
             color.y += light->diff.y * (light_vec.dot(norm)) * cir.diff.y + light->spec.y * std::pow(light_refl.dot(view_vec), cir.shin);
@@ -169,7 +169,7 @@ int main()
 
     delete eye;
 
-    stbi_write_png("test2.png", width, height, 3, img, 3 * width);
+    stbi_write_png("test3.png", width, height, 3, img, 3 * width);
     delete[] img;
 	return 0;
 }

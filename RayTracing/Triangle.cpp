@@ -22,9 +22,9 @@ Triangle::Triangle(const Vec3& aa, const Vec3& bb, const Vec3& cc, const Vec3& c
 	color = col;
 
 	amb = Vec3(0.2, 0.2, 0.2);
-	diff = Vec3(0.5, 0.5, 0.5);
-	spec = Vec3(0.7, 0.7, 0.7);
-	shin = 10;
+	diff = col * 0.4;
+	spec = col * 0.7;
+	shin = 2;
 }
 
 Vec3 Triangle::get_normal() const
