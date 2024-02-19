@@ -14,6 +14,7 @@ public:
 	Vec3 operator-(const Vec3& vec) const;
 	Vec3 operator*(const double c) const;
 	Vec3 operator/(const double c) const;
+	void operator+=(const Vec3& vec);
 	bool operator==(const Vec3& v2) const;
 	bool operator!=(const Vec3& v2) const;
 	double dot(const Vec3& vec) const;

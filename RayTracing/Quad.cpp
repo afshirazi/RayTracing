@@ -9,7 +9,8 @@ Quad::Quad()
 	d = Vec3(0, 0, 0);
 	color = Vec3(0, 0, 0);
 	is_planar = false;
-	diff = Vec3(0, 0, 0);
+	amb = Vec3(0.2, 0.2, 0.2);
+	diff = Vec3(0.5, 0.5, 0.5);
 	spec = Vec3(0, 0, 0);
 	shin = 0;
 }
@@ -22,7 +23,8 @@ Quad::Quad(const Vec3& aa, const Vec3& bb, const Vec3& cc, const Vec3& dd, const
 	d = dd;
 	color = col;
 
-	diff = Vec3(0.2, 0.2, 0.2);
+	amb = Vec3(0.2, 0.2, 0.2);
+	diff = Vec3(0.5, 0.5, 0.5);
 	spec = Vec3(0.7, 0.7, 0.7);
 	shin = 10;
 

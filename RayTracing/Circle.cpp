@@ -6,7 +6,7 @@ Circle::Circle()
 {
 	center = Vec3(0, 0, 0);
 	color = Vec3(0, 0, 0);
-	radius = 1;
+	radius = 0;
 
     diff = Vec3(0, 0, 0);
     spec = Vec3(0, 0, 0);
@@ -19,9 +19,22 @@ Circle::Circle(const Vec3& cent, const Vec3& col, double rad)
 	color = col;
 	radius = rad;
 
-    diff = Vec3(0.2, 0.2, 0.2);
+    amb = Vec3(0.2, 0.2, 0.2);
+    diff = Vec3(0.5, 0.5, 0.5);
     spec = Vec3(0.7, 0.7, 0.7);
     shin = 10;
+}
+
+Circle::Circle(const Vec3& cent, const Vec3& col, const Vec3& ambient, const Vec3& diffuse, const Vec3& specular, double shininess, double rad)
+{
+    center = cent;
+    color = col;
+    radius = rad;
+
+    amb = ambient;
+    diff = diffuse;
+    spec = specular;
+    shin = shininess;
 }
 
 Circle::Circle(double x, double y, double z, double r, double g, double b, double rad)

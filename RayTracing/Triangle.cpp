@@ -4,9 +4,9 @@
 
 Triangle::Triangle()
 {
-	a = Vec3(0, 0.5, 0);
-	b = Vec3(-0.5, 0, 0);
-	c = Vec3(0.5, 0, 0);
+	a = Vec3(-1, -1, -1);
+	b = Vec3(0, 0, 0);
+	c = Vec3(0, 0, 0);
 	color = Vec3(0, 0, 0);
 
 	diff = Vec3(0, 0, 0);
@@ -21,7 +21,8 @@ Triangle::Triangle(const Vec3& aa, const Vec3& bb, const Vec3& cc, const Vec3& c
 	c = cc;
 	color = col;
 
-	diff = Vec3(0.2, 0.2, 0.2);
+	amb = Vec3(0.2, 0.2, 0.2);
+	diff = Vec3(0.5, 0.5, 0.5);
 	spec = Vec3(0.7, 0.7, 0.7);
 	shin = 10;
 }

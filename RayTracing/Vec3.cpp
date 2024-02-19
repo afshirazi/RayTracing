@@ -40,6 +40,13 @@ Vec3 Vec3::operator/(double c) const
 	return Vec3(x / c, y / c, z / c);
 }
 
+void Vec3::operator+=(const Vec3& vec)
+{
+	x += vec.x;
+	y += vec.y;
+	z += vec.z;
+}
+
 bool Vec3::operator==(const Vec3& v2) const
 {
 	if (x == v2.x && y == v2.y && z == v2.z)

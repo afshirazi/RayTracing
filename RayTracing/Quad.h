@@ -1,7 +1,7 @@
 #pragma once
 #include "Vec3.h"
 
-class Quad
+class Quad 
 {
 private:
 	Vec3 norm;
@@ -13,6 +13,7 @@ public:
 	Vec3 c; // third
 	Vec3 d; // fourth
 	Vec3 color;
+	Vec3 amb;
 	Vec3 diff;
 	Vec3 spec;
 	double shin;
