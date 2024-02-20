@@ -81,22 +81,25 @@ Vec3 get_color(const Vec3 *ray, const Vec3 *origin)
         Vec3 norm = cir.get_normal(intr);
         //Vec3 refl = Vec3::normalize(norm * (2 * norm.dot((*ray) - (*origin))) - intr);
 
-        Vec3 view_vec = *origin - *ray;
+        Vec3 view_vec = Vec3::normalize(*origin - *ray);
         for (Light* light : lights)
         {
             Vec3 light_vec = Vec3::normalize(light->pos - intr);
             Vec3 light_refl = Vec3::normalize(norm * (2 * norm.dot(light_vec)) - light_vec);
-            color.x += light->diff.x * (light_vec.dot(norm)) * cir.diff.x + light->spec.x * std::pow(light_refl.dot(view_vec), cir.shin);
-            color.y += light->diff.y * (light_vec.dot(norm)) * cir.diff.y + light->spec.y * std::pow(light_refl.dot(view_vec), cir.shin);
-            color.z += light->diff.z * (light_vec.dot(norm)) * cir.diff.z + light->spec.z * std::pow(light_refl.dot(view_vec), cir.shin);
+            if ((light_vec).dot(norm) >= 0) // check if light on correct side of object
+            {
+                color.x += light->diff.x * (light_vec.dot(norm)) * cir.diff.x + light->spec.x * std::pow(light_refl.dot(view_vec), cir.shin);
+                color.y += light->diff.y * (light_vec.dot(norm)) * cir.diff.y + light->spec.y * std::pow(light_refl.dot(view_vec), cir.shin);
+                color.z += light->diff.z * (light_vec.dot(norm)) * cir.diff.z + light->spec.z * std::pow(light_refl.dot(view_vec), cir.shin);
+            }
+
+            color.x += light->amb.x * cir.amb.x;
+            color.y += light->amb.y * cir.amb.y;
+            color.z += light->amb.z * cir.amb.z;
         }
         color.x = color.x < 1.0 ? color.x : 1.0;
         color.y = color.y < 1.0 ? color.y : 1.0;
         color.z = color.z < 1.0 ? color.z : 1.0;
-
-        color.x = color.x > 0 ? color.x : 0;
-        color.y = color.y > 0 ? color.y : 0;
-        color.z = color.z > 0 ? color.z : 0;
 
         return Vec3(color.x, color.y, color.z);
     }
@@ -111,17 +114,20 @@ Vec3 get_color(const Vec3 *ray, const Vec3 *origin)
         {
             Vec3 light_vec = Vec3::normalize(light->pos - intr);
             Vec3 light_refl = Vec3::normalize(norm * (2 * norm.dot(light_vec)) - light_vec);
-            color.x += light->diff.x * (light_vec.dot(norm)) * tri.diff.x + light->spec.x * std::pow(light_refl.dot(view_vec), tri.shin);
-            color.y += light->diff.y * (light_vec.dot(norm)) * tri.diff.y + light->spec.y * std::pow(light_refl.dot(view_vec), tri.shin);
-            color.z += light->diff.z * (light_vec.dot(norm)) * tri.diff.z + light->spec.z * std::pow(light_refl.dot(view_vec), tri.shin);
+            if ((light_vec).dot(norm) >= 0)
+            {
+                color.x += light->diff.x * (light_vec.dot(norm)) * tri.diff.x + light->spec.x * std::pow(light_refl.dot(view_vec), tri.shin);
+                color.y += light->diff.y * (light_vec.dot(norm)) * tri.diff.y + light->spec.y * std::pow(light_refl.dot(view_vec), tri.shin);
+                color.z += light->diff.z * (light_vec.dot(norm)) * tri.diff.z + light->spec.z * std::pow(light_refl.dot(view_vec), tri.shin);
+            }
+
+            color.x += light->amb.x * tri.amb.x;
+            color.y += light->amb.y * tri.amb.y;
+            color.z += light->amb.z * tri.amb.z;
         }
         color.x = color.x < 1.0 ? color.x : 1.0;
         color.y = color.y < 1.0 ? color.y : 1.0;
         color.z = color.z < 1.0 ? color.z : 1.0;
-
-        color.x = color.x > 0 ? color.x : 0;
-        color.y = color.y > 0 ? color.y : 0;
-        color.z = color.z > 0 ? color.z : 0;
 
         return Vec3(color.x, color.y, color.z);
     }
@@ -143,14 +149,15 @@ int main()
 
     const Vec3 *eye = new Vec3(0, 0, 0);
 
-    lights.push_back(new Light(Vec3(40, 30, -3), Vec3(0.1, 0.1, 0.1), Vec3(1, 1, 1), Vec3(1, 1, 1)));
+    lights.push_back(new Light(Vec3(40, 30, 30), Vec3(0.1, 0.1, 0.1), Vec3(1, 1, 1), Vec3(1, 1, 1)));
+    lights.push_back(new Light(Vec3(-4, -3, 13), Vec3(0.1, 0.1, 0.1), Vec3(1, 1, 1), Vec3(1, 1, 1)));
 
     circles.push_back(new Circle(*(new Vec3(0, 0, -10)), *(new Vec3(0.3, 0.2, 0.8)), 2));
     circles.push_back(new Circle(*(new Vec3(-4, -4, -5.5)), *(new Vec3(0.3, 0.7, 0.9)), 1));
     circles.push_back(new Circle(*(new Vec3(4, 4, -11)), *(new Vec3(0.3, 0.7, 0.9)), 1));
 
-    triangles.push_back(new Triangle(*(new Vec3(4, -4, -9)), *(new Vec3(0, 0, -9)), *(new Vec3(-9, -5, -9)), *(new Vec3(0.7, 0.2, 0.3))));
-    triangles.push_back(new Triangle(*(new Vec3(-4, -4, -8.5)), *(new Vec3(0, 0, -9)), *(new Vec3(-9, -5, -9)), *(new Vec3(0.1, 0.1, 0.1))));
+    triangles.push_back(new Triangle(*(new Vec3(4, -4, -12)), *(new Vec3(0, 0, -13)), *(new Vec3(-9, -5, -9)), *(new Vec3(0.7, 0.2, 0.3))));
+    triangles.push_back(new Triangle(*(new Vec3(14, -4, -8)), *(new Vec3(3, -4, -12)), *(new Vec3(9, -8, -9)), *(new Vec3(0.4, 0.32, 0.782))));
     triangles.push_back(new Triangle(*(new Vec3(9, 5, -9)), *(new Vec3(4, 4, -9)), *(new Vec3(0, 0, -9)), *(new Vec3(0.4, 0.9, 0.2))));
 
     unsigned char *img = new unsigned char[height * width * 3];
@@ -169,7 +176,7 @@ int main()
 
     delete eye;
 
-    stbi_write_png("test3.png", width, height, 3, img, 3 * width);
+    stbi_write_png("testlight10.png", width, height, 3, img, 3 * width);
     delete[] img;
 	return 0;
 }

@@ -21,10 +21,10 @@ Triangle::Triangle(const Vec3& aa, const Vec3& bb, const Vec3& cc, const Vec3& c
 	c = cc;
 	color = col;
 
-	amb = Vec3(0.2, 0.2, 0.2);
+	amb = col * 0.2;
 	diff = col * 0.4;
 	spec = col * 0.7;
-	shin = 2;
+	shin = 200;
 }
 
 Vec3 Triangle::get_normal() const

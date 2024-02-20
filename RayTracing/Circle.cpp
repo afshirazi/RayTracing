@@ -19,10 +19,10 @@ Circle::Circle(const Vec3& cent, const Vec3& col, double rad)
 	color = col;
 	radius = rad;
 
-    amb = Vec3(0.2, 0.2, 0.2);
+    amb = col * 0.2;
     diff = col * 0.4;
     spec = col * 0.7;
-    shin = 2;
+    shin = 20;
 }
 
 Circle::Circle(const Vec3& cent, const Vec3& col, const Vec3& ambient, const Vec3& diffuse, const Vec3& specular, double shininess, double rad)
