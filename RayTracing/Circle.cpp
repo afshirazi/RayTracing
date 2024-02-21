@@ -5,7 +5,6 @@
 Circle::Circle()
 {
 	center = Vec3(0, 0, 0);
-	color = Vec3(0, 0, 0);
 	radius = 0;
 
     diff = Vec3(0, 0, 0);
@@ -16,7 +15,6 @@ Circle::Circle()
 Circle::Circle(const Circle& cir)
 {
     center = Vec3(cir.center);
-    color = Vec3(cir.color);
     radius = cir.radius;
 
     diff = Vec3(cir.diff);
@@ -27,7 +25,6 @@ Circle::Circle(const Circle& cir)
 Circle::Circle(const Vec3& cent, const Vec3& col, double rad)
 {
 	center = cent;
-	color = col;
 	radius = rad;
 
     diff = col * 0.4;
@@ -35,10 +32,9 @@ Circle::Circle(const Vec3& cent, const Vec3& col, double rad)
     shin = 20;
 }
 
-Circle::Circle(const Vec3& cent, const Vec3& col, const Vec3& diffuse, const Vec3& specular, double shininess, double rad)
+Circle::Circle(const Vec3& cent, const Vec3& diffuse, const Vec3& specular, double shininess, double rad)
 {
     center = cent;
-    color = col;
     radius = rad;
 
     diff = diffuse;
@@ -53,14 +49,14 @@ Circle::Circle(double x, double y, double z, double r, double g, double b, doubl
 
 bool Circle::operator==(const Circle& cir) const
 {
-    if (center == cir.center && color == cir.color && radius == cir.radius)
+    if (center == cir.center && diff == cir.diff && spec == cir.spec && radius == cir.radius)
         return true;
     return false;
 }
 
 bool Circle::operator!=(const Circle& cir) const
 {
-    if (center == cir.center && color == cir.color && radius == cir.radius)
+    if (center == cir.center && diff == cir.diff && spec == cir.spec && radius == cir.radius)
         return false;
     return true;
 }

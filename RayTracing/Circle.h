@@ -5,7 +5,6 @@ class Circle
 public:
 	Vec3 center;
 	double radius;
-	Vec3 color;
 	Vec3 diff;
 	Vec3 spec;
 	double shin;
@@ -13,7 +12,7 @@ public:
 	Circle();
 	Circle(const Circle& cir);
 	Circle(const Vec3& cent, const Vec3& col, double rad);
-	Circle(const Vec3& cent, const Vec3& col, const Vec3& diff, const Vec3& spec, double shin, double rad);
+	Circle(const Vec3& cent, const Vec3& diff, const Vec3& spec, double shin, double rad);
 	Circle(double x, double y, double z, double r, double g, double b, double rad);
 	
 	bool operator==(const Circle& cir) const;

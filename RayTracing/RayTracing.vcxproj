@@ -130,14 +130,12 @@
     <ClCompile Include="Circle.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Quad.cpp" />
     <ClCompile Include="Triangle.cpp" />
     <ClCompile Include="Vec3.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Circle.h" />
     <ClInclude Include="Light.h" />
-    <ClInclude Include="Quad.h" />
     <ClInclude Include="stb_image_write.h" />
     <ClInclude Include="Triangle.h" />
     <ClInclude Include="Vec3.h" />

@@ -7,7 +7,6 @@ Triangle::Triangle()
 	a = Vec3(-1, -1, -1);
 	b = Vec3(0, 0, 0);
 	c = Vec3(0, 0, 0);
-	color = Vec3(0, 0, 0);
 
 	diff = Vec3(0, 0, 0);
 	spec = Vec3(0, 0, 0);
@@ -19,23 +18,33 @@ Triangle::Triangle(const Vec3& aa, const Vec3& bb, const Vec3& cc, const Vec3& c
 	a = aa;
 	b = bb;
 	c = cc;
-	color = col;
 
 	diff = col * 0.4;
 	spec = col * 0.7;
 	shin = 200;
 }
 
+Triangle::Triangle(const Vec3& aa, const Vec3& bb, const Vec3& cc, const Vec3& diffuse, const Vec3& specular, double shininess)
+{
+	a = aa;
+	b = bb;
+	c = cc;
+
+	diff = diffuse;
+	spec = specular;
+	shin = shininess;
+}
+
 bool Triangle::operator==(const Triangle& tri) const
 {
-	if (a == tri.a && b == tri.b && c == tri.c && color == tri.color )
+	if (a == tri.a && b == tri.b && c == tri.c && diff == tri.diff && spec == tri.spec)
 		return true;
 	return false;
 }
 
 bool Triangle::operator!=(const Triangle& tri) const
 {
-	if (a == tri.a && b == tri.b && c == tri.c && color == tri.color)
+	if (a == tri.a && b == tri.b && c == tri.c && diff == tri.diff && spec == tri.spec)
 		return false;
 	return true;
 }

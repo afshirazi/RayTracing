@@ -11,23 +11,20 @@
 #include "Vec3.h"
 #include "Circle.h"
 #include "Triangle.h"
-#include "Quad.h"
 #include "Light.h"
 
 
 enum ObjType {
-    EMPTY, CIRCLE, TRIANGLE, QUAD
+    EMPTY, CIRCLE, TRIANGLE
 };
 
 struct ObjUni {
     Triangle tri;
     Circle cir;
-    Quad quad;
 
     ObjUni() = default;
     ObjUni(Circle* _cir) { cir = *_cir; }
     ObjUni(Triangle* _tri) { tri = *_tri; }
-    ObjUni(Quad* _quad) { quad = *_quad; }
 };
 
 std::vector<ObjUni*> objects;
@@ -70,8 +67,6 @@ std::vector<Light*> shadow_rays(const Vec3& point, int obj_idx)
                 intr = arr_obj->cir.get_intersect(light_vec, p);
             else if (arr_obj->tri != Triangle())
                 intr = arr_obj->tri.get_intersect(light_vec, p);
-            else
-                intr = arr_obj->quad.get_intersect(light_vec, p);
 
             if (intr != Vec3(0, 0, 1))
             {
@@ -114,11 +109,6 @@ Vec3 get_color(const Vec3 *ray, const Vec3 *origin, int obj_idx, int depth)
             intr = arr_obj->tri.get_intersect(*ray, *origin);
             check_type = TRIANGLE;
         }
-        else
-        {
-            intr = arr_obj->quad.get_intersect(*ray, *origin);
-            check_type = QUAD;
-        }
 
         if (obj_idx == -1 && intr.z < origin->z && intr.z > zBuf) // in front of camera
         {
@@ -138,7 +128,7 @@ Vec3 get_color(const Vec3 *ray, const Vec3 *origin, int obj_idx, int depth)
 
     if (intersect == CIRCLE) // I like circles
     {
-        Circle cir = Circle(obj->cir.center, obj->cir.color, obj->cir.diff, obj->cir.spec, obj->cir.shin, obj->cir.radius);
+        Circle cir = Circle(obj->cir.center, obj->cir.diff, obj->cir.spec, obj->cir.shin, obj->cir.radius);
         Vec3 intr = cir.get_intersect(*ray, *origin);
         Vec3 norm = cir.get_normal(intr);
 
@@ -169,7 +159,7 @@ Vec3 get_color(const Vec3 *ray, const Vec3 *origin, int obj_idx, int depth)
     }
     else if (intersect == TRIANGLE)
     {
-        Triangle tri = Triangle(obj->tri.a, obj->tri.b, obj->tri.c, obj->tri.color);
+        Triangle tri = Triangle(obj->tri.a, obj->tri.b, obj->tri.c, obj->tri.diff, obj->tri.spec, obj->tri.shin);
         Vec3 intr = tri.get_intersect(*ray, *origin);
         Vec3 norm = tri.get_normal();
 
@@ -197,15 +187,6 @@ Vec3 get_color(const Vec3 *ray, const Vec3 *origin, int obj_idx, int depth)
 
         return Vec3(color.x, color.y, color.z);
     }
-    else if (intersect == QUAD)
-    {
-        for (Light* light : lights)
-        {
-
-        }
-
-        return Vec3(0.5, 0.5, 0.5);
-    }
     else 
         return Vec3(0.5, 0.5, 0.5);
 }
@@ -220,14 +201,14 @@ int main()
     lights.push_back(new Light(Vec3(40, 30, 30), Vec3(1, 1, 1), Vec3(1, 1, 1)));
     lights.push_back(new Light(Vec3(-4, -3, 13), Vec3(1, 1, 1), Vec3(1, 1, 1)));
 
-    objects.push_back(new ObjUni(new Circle(*(new Vec3(0, 0, -10)), *(new Vec3(0.3, 0.2, 0.8)), 2)));
+    objects.push_back(new ObjUni(new Circle(*(new Vec3(0, 0, -10)), *(new Vec3(0.912, 0.914, 0.920)), *(new Vec3(0.952, 0.788, 0.408)), 200, 2)));
     objects.push_back(new ObjUni(new Circle(*(new Vec3(-4, -4, -5.5)), *(new Vec3(0.3, 0.7, 0.9)), 1)));
     objects.push_back(new ObjUni(new Circle(*(new Vec3(4, 4, -11)), *(new Vec3(0.3, 0.7, 0.9)), 1)));
 
     objects.push_back(new ObjUni(new Triangle(*(new Vec3(4, -4, -12)), *(new Vec3(0, 0, -13)), *(new Vec3(-9, -5, -9)), *(new Vec3(0.7, 0.2, 0.3)))));
     objects.push_back(new ObjUni(new Triangle(*(new Vec3(14, -4, -8)), *(new Vec3(3, -4, -12)), *(new Vec3(9, -8, -9)), *(new Vec3(0.4, 0.32, 0.782)))));
     objects.push_back(new ObjUni(new Triangle(*(new Vec3(9, 5, -9)), *(new Vec3(4, 4, -9)), *(new Vec3(0, 0, -9)), *(new Vec3(0.4, 0.9, 0.2)))));
-    //objects.push_back(new ObjUni(new Triangle(*(new Vec3(8, 8, 5)), *(new Vec3(-8, -8, 5)), *(new Vec3(8, -8, 5)), *(new Vec3(0.7, 0.9, 0.2)))));
+    objects.push_back(new ObjUni(new Triangle(*(new Vec3(8, 8, 5)), *(new Vec3(-8, -8, 5)), *(new Vec3(8, -8, 5)), *(new Vec3(0.7, 0.9, 0.2)))));
 
     double* raw_img = new double[height * width * 3];
     unsigned char *img = new unsigned char[height * width * 3];
@@ -253,7 +234,7 @@ int main()
 
     delete eye;
 
-    stbi_write_png("testrefl4.png", width, height, 3, img, 3 * width);
+    stbi_write_png("testrefl6.png", width, height, 3, img, 3 * width);
     delete[] img;
 	return 0;
 }
