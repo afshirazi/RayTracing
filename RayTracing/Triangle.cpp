@@ -21,10 +21,23 @@ Triangle::Triangle(const Vec3& aa, const Vec3& bb, const Vec3& cc, const Vec3& c
 	c = cc;
 	color = col;
 
-	amb = col * 0.2;
 	diff = col * 0.4;
 	spec = col * 0.7;
 	shin = 200;
+}
+
+bool Triangle::operator==(const Triangle& tri) const
+{
+	if (a == tri.a && b == tri.b && c == tri.c && color == tri.color )
+		return true;
+	return false;
+}
+
+bool Triangle::operator!=(const Triangle& tri) const
+{
+	if (a == tri.a && b == tri.b && c == tri.c && color == tri.color)
+		return false;
+	return true;
 }
 
 Vec3 Triangle::get_normal() const
@@ -46,20 +59,20 @@ Vec3 Triangle::get_intersect(const Vec3& ray, const Vec3& origin) const
 	double det = edge1.dot(ray_cross_e2);
 
 	if (det > -epsilon && det < epsilon)
-		return Vec3(-1, -1, -1);    // This ray is parallel to this triangle.
+		return Vec3(0, 0, 1);    // This ray is parallel to this triangle.
 
 	double inv_det = 1.0 / det;
 	Vec3 s = origin - a;
 	double u = inv_det * s.dot(ray_cross_e2);
 
 	if (u < 0 || u > 1)
-		return Vec3(-1, -1, -1);
+		return Vec3(0, 0, 1);
 
 	Vec3 s_cross_e1 = s.cross(edge1);
 	double v = inv_det * ray.dot(s_cross_e1);
 
 	if (v < 0 || u + v > 1)
-		return Vec3(-1, -1, -1);
+		return Vec3(0, 0, 1);
 
 	// At this stage we can compute t to find out where the intersection point is on the line.
 	double t = inv_det * edge2.dot(s_cross_e1);
@@ -70,5 +83,5 @@ Vec3 Triangle::get_intersect(const Vec3& ray, const Vec3& origin) const
 		return Vec3(p.x, p.y, p.z);
 	}
 	else // This means that there is a line intersection but not a ray intersection.
-		return Vec3(-1, -1, -1);
+		return Vec3(0, 0, 1);
 }

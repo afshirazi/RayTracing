@@ -84,4 +84,12 @@ Vec3 Vec3::normalize(const Vec3& vec)
 	return Vec3(vec * (1 / vec.mag()));
 }
 
+double Vec3::euclidian_sq(const Vec3& v1, const Vec3& v2)
+{
+	double dx = v2.x - v1.x;
+	double dy = v2.y - v1.y;
+	double dz = v2.z - v1.z;
+	return (dx * dx + dy * dy + dz * dz); 
+}
+
 

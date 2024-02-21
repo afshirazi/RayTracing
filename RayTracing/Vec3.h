@@ -20,6 +20,7 @@ public:
 	double dot(const Vec3& vec) const;
 	Vec3 cross(const Vec3& vec) const;
 	double mag() const;
-	static Vec3 normalize(const Vec3 &vec);
+	static Vec3 normalize(const Vec3& vec);
+	static double euclidian_sq(const Vec3& v1, const Vec3& v2);
 };
 

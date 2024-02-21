@@ -13,7 +13,6 @@ public:
 	Vec3 c; // third
 	Vec3 d; // fourth
 	Vec3 color;
-	Vec3 amb;
 	Vec3 diff;
 	Vec3 spec;
 	double shin;
@@ -21,6 +20,8 @@ public:
 	Quad();
 	Quad(const Vec3& a, const Vec3& b, const Vec3& c, const Vec3& d, const Vec3& col);
 
+	bool operator==(const Quad& quad) const;
+	bool operator!=(const Quad& quad) const;
 	Vec3 get_normal() const;
 	Vec3 get_intersect(const Vec3& ray, const Vec3& origin) const;
 };
