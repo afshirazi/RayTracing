@@ -183,12 +183,15 @@ Vec3 get_color(const Vec3 *ray, const Vec3 *origin, int obj_idx, int depth)
         return Vec3(0.4, 0.4, 0.4);
 }
 
-int main()
+int main(int argc, char* argv[])
 {
     int width = 1600;
     int height = 900;
 
     const Vec3 *eye = new Vec3(0, 0, 0);
+
+    //std::string in_file(argv[1]);
+    //std::string out_file(argv[2]);
 
     Parser file_parser;
     file_parser.parse_file("objs2.txt");
@@ -221,7 +224,7 @@ int main()
 
     delete eye;
 
-    stbi_write_png("testall12.png", width, height, 3, img, 3 * width);
+    stbi_write_png("objs2.png", width, height, 3, img, 3 * width);
     delete[] img;
 	return 0;
 }
