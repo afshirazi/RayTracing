@@ -12,19 +12,11 @@
 #include "Circle.h"
 #include "Triangle.h"
 #include "Light.h"
+#include "Parser.h"
 
 
 enum ObjType {
     EMPTY, CIRCLE, TRIANGLE
-};
-
-struct ObjUni {
-    Triangle tri;
-    Circle cir;
-
-    ObjUni() = default;
-    ObjUni(Circle* _cir) { cir = *_cir; }
-    ObjUni(Triangle* _tri) { tri = *_tri; }
 };
 
 std::vector<ObjUni*> objects;
@@ -152,7 +144,7 @@ Vec3 get_color(const Vec3 *ray, const Vec3 *origin, int obj_idx, int depth)
 
             Vec3 in_ray = Vec3::normalize(*origin - *ray);
             Vec3 refl = Vec3::normalize(norm * (2 * norm.dot(in_ray)) - in_ray);
-            color += get_color(&refl, &intr, intr_idx, depth - 1) * 0.5;
+            color += get_color(&refl, &intr, intr_idx, depth - 1);
         }
 
         return Vec3(color.x, color.y, color.z);
@@ -182,33 +174,40 @@ Vec3 get_color(const Vec3 *ray, const Vec3 *origin, int obj_idx, int depth)
         {
             Vec3 in_ray = Vec3::normalize(*origin - *ray);
             Vec3 refl = Vec3::normalize(norm * (2 * norm.dot(in_ray)) - in_ray);
-            color += get_color(&refl, &intr, intr_idx, depth - 1) * 0.5;
+            color += get_color(&refl, &intr, intr_idx, depth - 1);
         }
 
         return Vec3(color.x, color.y, color.z);
     }
     else 
-        return Vec3(0.5, 0.5, 0.5);
+        return Vec3(0.7, 0.7, 0.7);
 }
 
 int main()
 {
-    const int width = 1600;
-    const int height = 900;
+    int width = 1600;
+    int height = 900;
 
     const Vec3 *eye = new Vec3(0, 0, 0);
 
+    /*
     lights.push_back(new Light(Vec3(40, 30, 30), Vec3(1, 1, 1), Vec3(1, 1, 1)));
     lights.push_back(new Light(Vec3(-4, -3, 13), Vec3(1, 1, 1), Vec3(1, 1, 1)));
 
-    objects.push_back(new ObjUni(new Circle(*(new Vec3(0, 0, -10)), *(new Vec3(0.912, 0.914, 0.920)), *(new Vec3(0.952, 0.788, 0.408)), 200, 2)));
-    objects.push_back(new ObjUni(new Circle(*(new Vec3(-4, -4, -5.5)), *(new Vec3(0.3, 0.7, 0.9)), 1)));
+    objects.push_back(new ObjUni(new Circle( Vec3(0, 0, -10), Vec3(0.952, 0.788, 0.408), Vec3(0.912, 0.914, 0.920), 200, 2)));
+    objects.push_back(new ObjUni(new Circle(Vec3(-4, -4, -5.5), Vec3(0.3, 0.7, 0.9), 1)));
     objects.push_back(new ObjUni(new Circle(*(new Vec3(4, 4, -11)), *(new Vec3(0.3, 0.7, 0.9)), 1)));
 
-    objects.push_back(new ObjUni(new Triangle(*(new Vec3(4, -4, -12)), *(new Vec3(0, 0, -13)), *(new Vec3(-9, -5, -9)), *(new Vec3(0.7, 0.2, 0.3)))));
-    objects.push_back(new ObjUni(new Triangle(*(new Vec3(14, -4, -8)), *(new Vec3(3, -4, -12)), *(new Vec3(9, -8, -9)), *(new Vec3(0.4, 0.32, 0.782)))));
-    objects.push_back(new ObjUni(new Triangle(*(new Vec3(9, 5, -9)), *(new Vec3(4, 4, -9)), *(new Vec3(0, 0, -9)), *(new Vec3(0.4, 0.9, 0.2)))));
-    objects.push_back(new ObjUni(new Triangle(*(new Vec3(8, 8, 5)), *(new Vec3(-8, -8, 5)), *(new Vec3(8, -8, 5)), *(new Vec3(0.7, 0.9, 0.2)))));
+    objects.push_back(new ObjUni(new Triangle(Vec3(4, -4, -12), Vec3(0, 0, -13),  Vec3(-9, -5, -9), Vec3(0.7, 0.2, 0.3))));
+    objects.push_back(new ObjUni(new Triangle(Vec3(14, -4, -8), Vec3(3, -4, -12), Vec3(9, -8, -9), Vec3(0.4, 0.32, 0.782))));
+    objects.push_back(new ObjUni(new Triangle(Vec3(9, 5, -9), Vec3(4, 4, -9), Vec3(0, 0, -9), Vec3(0.4, 0.9, 0.2))));
+    objects.push_back(new ObjUni(new Triangle(Vec3(8, 8, 5), Vec3(-8, -8, 5), Vec3(8, -8, 5), Vec3(0.7, 0.9, 0.2))));
+    */
+
+    Parser file_parser;
+    file_parser.parse_file("objs.txt");
+    lights = file_parser.lights;
+    objects = file_parser.objects;
 
     double* raw_img = new double[height * width * 3];
     unsigned char *img = new unsigned char[height * width * 3];
@@ -225,16 +224,18 @@ int main()
         }
     }
 
-    double max = *std::max_element(raw_img, raw_img + height * width * 3); // find max element
+    double max = *std::max_element(raw_img, raw_img + height * width * 3); 
+    double min = *std::min_element(raw_img, raw_img + height * width * 3); 
+    max = max - (min / 2);
     for (int i = 0; i < height * width * 3; i++) 
     {
-        raw_img[i] = raw_img[i] / max; // normalize to [0,1]
+        raw_img[i] = (raw_img[i] - (min / 2)) / max; // change black point, normalize to [0,1]
         img[i] = (unsigned char)(255 * raw_img[i]); // change to rgb
     }
 
     delete eye;
 
-    stbi_write_png("testrefl6.png", width, height, 3, img, 3 * width);
+    stbi_write_png("testall9.png", width, height, 3, img, 3 * width);
     delete[] img;
 	return 0;
 }
