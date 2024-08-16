@@ -6,4 +6,11 @@ Basic ray tracer. Currently supports:
 - Specular-specular reflections
 - Point lights
 
-A few things I'm interested in adding are Cook-Torrance (or any other model), area lights, and transparent objects with refraction. Maybe I should refactor my code before that though.
+# To-do list:
+- [ ] Refactor the code
+  - [ ] Move to Rust (no real reason other than easier OOP probably?)
+  - [ ] Abstract the different objects and move common methods out or smth
+- [ ] Add different lighting model (Cook-Torrance maybe)
+- [ ] Add refractions/transparency
+- [ ] Run it on gpu
+- [ ] Make it real-time
