@@ -9,7 +9,8 @@ Basic ray tracer. Currently supports:
 # To-do list:
 - [ ] Refactor the code
   - [ ] Move to Rust (no real reason other than easier OOP probably?)
-  - [ ] Abstract the different objects and move common methods out or smth
+  - [ ] Implement as trait + methods
+- [ ] Add spatial hashing to objects (if I decide to support large enough scenes)
 - [ ] Add different lighting model (Cook-Torrance maybe)
 - [ ] Add refractions/transparency
 - [ ] Run it on gpu
