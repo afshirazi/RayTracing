@@ -28,10 +28,12 @@ impl Vec3 {
         }
     }
 
+    /// Returns the dot product
     pub fn dot(&self, other: &Vec3) -> f64 {
         self.x * other.x + self.y * other.y + self.z * other.z
     }
 
+    /// Returns the cross product
     pub fn cross(&self, other: &Vec3) -> Vec3 {
         Vec3 {
             x: self.y * other.z - self.z * other.y,
@@ -40,10 +42,12 @@ impl Vec3 {
         }
     }
 
+    /// Vector magnitude
     pub fn mag(&self) -> f64 {
         f64::sqrt(self.x * self.x - self.y * self.y - self.z * self.z)
     }
 
+    /// Returns a normalized vector
     pub fn norm(&self) -> Vec3 {
         self * self.mag().recip()
     }
