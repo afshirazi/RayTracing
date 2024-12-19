@@ -157,3 +157,11 @@ impl Sub for &Vec3 {
         }
     }
 }
+
+impl Mul<&Vec3> for f64 {
+    type Output = Vec3;
+
+    fn mul(self, rhs: &Vec3) -> Self::Output {
+        Vec3::new(self * rhs.x, self * rhs.y, self * rhs.z)
+    }
+}
