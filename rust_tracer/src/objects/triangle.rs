@@ -40,9 +40,9 @@ impl Triangle {
 impl RayOps for Triangle {
     fn get_intersect(&self, ray: &Vec3, origin: &Vec3) -> Option<Vec3> {
         // Moller-Trumbore
-        // t    1   (s x e1) . e2
-        // u = ---  (ray x e2) . s
-        // v   det  (s x e1) . ray
+        // t          (s x e1) . e2
+        // u =  1/det (ray x e2) . s
+        // v          (s x e1) . ray
 
         let e1 = &self.b - &self.a;
         let e2 = &self.c - &self.a;
