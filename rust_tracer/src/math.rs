@@ -14,9 +14,9 @@ impl Vec3 {
 
     pub fn empty_vec() -> Vec3 {
         Vec3 {
-            x: 0f64,
-            y: 0f64,
-            z: 0f64,
+            x: 0.0,
+            y: 0.0,
+            z: 0.0,
         }
     }
 
