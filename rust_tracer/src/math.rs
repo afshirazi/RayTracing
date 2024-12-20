@@ -2,9 +2,9 @@ use std::ops::{Add, Div, Mul, Sub};
 
 #[derive(Debug, PartialEq)]
 pub struct Vec3 {
-    x: f64,
-    y: f64,
-    z: f64,
+    pub x: f64,
+    pub y: f64,
+    pub z: f64,
 }
 
 impl Vec3 {
@@ -44,7 +44,7 @@ impl Vec3 {
 
     /// Vector magnitude
     pub fn mag(&self) -> f64 {
-        f64::sqrt(self.x * self.x - self.y * self.y - self.z * self.z)
+        f64::sqrt(self.x * self.x + self.y * self.y + self.z * self.z)
     }
 
     /// Returns a normalized vector

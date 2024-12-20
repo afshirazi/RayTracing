@@ -70,3 +70,41 @@ impl PartialEq for Circle {
         self.center == other.center && self.radius == other.radius
     }
 }
+
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_intersect_success() {
+        let c = Circle::new(
+            Vec3::new(0.0, 0.0, -4.0),
+            2.0,
+            Vec3::new(0.4, 0.2, 0.76),
+            Vec3::empty_vec(),
+            10.0,
+        );
+
+        let ray = Vec3::new(0.0, 0.0, -1.0);
+        let origin = Vec3::empty_vec();
+
+        assert_eq!(c.get_intersect(&ray, &origin).unwrap(), Vec3::new(0.0, 0.0, -2.0));
+    }
+
+    #[test]
+    fn test_intersect_fail() {
+        let c = Circle::new(
+            Vec3::new(0.0, 0.0, -4.0),
+            2.0,
+            Vec3::new(0.4, 0.2, 0.76),
+            Vec3::empty_vec(),
+            10.0,
+        );
+
+        let ray = Vec3::new(20.0, 30.0, -1.0).norm();
+        let origin = Vec3::empty_vec();
+
+        assert_eq!(c.get_intersect(&ray, &origin), None);
+    }
+}
