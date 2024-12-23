@@ -50,7 +50,7 @@ impl RayOps for Triangle {
 
         let det = e1.dot(&ray_cross_e2); // (R x e2) . e1
 
-        if det < EPSILON || det > -EPSILON {
+        if det < EPSILON && det > -EPSILON {
             return None;
         }
 
@@ -79,15 +79,15 @@ impl RayOps for Triangle {
 
         ab.cross(&ac).norm()
     }
-    
+
     fn get_diff(&self) -> &Vec3 {
         &self.diff
     }
-    
+
     fn get_spec(&self) -> &Vec3 {
         &self.spec
     }
-    
+
     fn get_shin(&self) -> f64 {
         self.shin
     }
@@ -97,5 +97,25 @@ impl RayOps for Triangle {
 impl PartialEq for Triangle {
     fn eq(&self, other: &Self) -> bool {
         self.a == other.a && self.b == other.b && self.c == other.c
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_intersect_success() {
+        let tri = Triangle::from_color(
+            Vec3::new(2.0, -3.0, -10.0),
+            Vec3::new(0.0, 1.5, -11.0),
+            Vec3::new(-1.5, -3.0, -9.0),
+            &Vec3::new(0.4, 0.2, 0.76),
+        );
+
+        let ray = Vec3::new(0.0, 0.0, -1.0);
+        let origin = Vec3::empty_vec();
+
+        assert!(tri.get_intersect(&ray, &origin).is_some());
     }
 }
