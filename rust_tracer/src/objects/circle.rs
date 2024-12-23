@@ -62,6 +62,18 @@ impl RayOps for Circle {
     fn get_normal(&self, point: &Vec3) -> Vec3 {
         (point - &self.center).norm()
     }
+    
+    fn get_diff(&self) -> &Vec3 {
+        &self.diff
+    }
+    
+    fn get_spec(&self) -> &Vec3 {
+        &self.spec
+    }
+    
+    fn get_shin(&self) -> f64 {
+        self.shin
+    }
 }
 
 // equal if same radius and center, not necessarily same object

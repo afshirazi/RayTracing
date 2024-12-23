@@ -17,6 +17,12 @@ pub trait RayOps {
     /// same for any input if it's a triangle. Expects a valid point on the
     /// surface, does not check for validity.
     fn get_normal(&self, point: &Vec3) -> Vec3;
+
+    fn get_diff(&self) -> &Vec3;
+
+    fn get_spec(&self) -> &Vec3;
+
+    fn get_shin(&self) -> f64;
 }
 
 pub enum Object {
@@ -36,6 +42,27 @@ impl RayOps for Object {
         match self {
             Object::Circle(c) => c.get_normal(point),
             Object::Triangle(tri) => tri.get_normal(point)
+        }
+    }
+    
+    fn get_diff(&self) -> &Vec3 {
+        match self {
+            Object::Circle(c) => c.get_diff(),
+            Object::Triangle(tri) => tri.get_diff()
+        }
+    }
+    
+    fn get_spec(&self) -> &Vec3 {
+        match self {
+            Object::Circle(c) => c.get_spec(),
+            Object::Triangle(tri) => tri.get_spec()
+        }
+    }
+    
+    fn get_shin(&self) -> f64 {
+        match self {
+            Object::Circle(c) => c.get_shin(),
+            Object::Triangle(tri) => tri.get_shin()
         }
     }
 }

@@ -79,6 +79,18 @@ impl RayOps for Triangle {
 
         ab.cross(&ac).norm()
     }
+    
+    fn get_diff(&self) -> &Vec3 {
+        &self.diff
+    }
+    
+    fn get_spec(&self) -> &Vec3 {
+        &self.spec
+    }
+    
+    fn get_shin(&self) -> f64 {
+        self.shin
+    }
 }
 
 // equal if same dimensions, not necessarily same object

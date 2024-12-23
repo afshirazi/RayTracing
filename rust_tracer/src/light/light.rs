@@ -1,9 +1,9 @@
 use crate::math::Vec3;
 
 pub struct Light {
-    pos: Vec3,
-    diff: Vec3,
-    spec: Vec3,
+    pub pos: Vec3,
+    pub diff: Vec3,
+    pub spec: Vec3,
 }
 
 impl Light {
