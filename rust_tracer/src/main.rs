@@ -1,6 +1,8 @@
+use core::f64;
+
 use image::{Rgb, RgbImage};
 use math::Vec3;
-use objects::{Circle, Object, RayOps};
+use objects::{Circle, Object, RayOps, Triangle};
 
 mod light;
 mod math;
@@ -29,28 +31,52 @@ fn get_ray(eye: &Vec3, x: u32, y: u32, w: u32, h: u32) -> Vec3 {
     (&p - eye).norm()
 }
 
-fn get_color(ray: &Vec3, origin: &Vec3) -> Vec3 {
-    let c = Circle::new(
-        Vec3::new(0.0, 0.0, -4.0),
-        2.0,
-        Vec3::new(0.4, 0.2, 0.76),
-        Vec3::empty_vec(),
-        10.0,
-    );
+fn get_color(ray: &Vec3, origin: &Vec3, objects: &Vec<Object>) -> Vec3 {
+    let mut color_buf = Vec3::new(0.3, 0.3, 0.3);
+    let z_buf = f64::NEG_INFINITY;
 
-    c.get_intersect(ray, origin).map_or_else(
-        || Vec3::new(0.25, 0.25, 0.25),
-        |_| Vec3::new(0.4, 0.2, 0.76),
-    )
+    for obj in objects {
+        let intersect = match obj.get_intersect(ray, origin) {
+            Some(point) => point,
+            None => continue
+        };
+
+        if intersect.z > z_buf {
+            color_buf = 
+        }
+    }
+
+    color_buf
 }
 
 fn main() {
     let mut img = RgbImage::new(1600, 900);
     let eye = Vec3::empty_vec();
 
+    let objs = vec![
+        Object::Circle(Circle::new(
+            Vec3::new(2.0, -3.0, -10.0),
+            2.0,
+            Vec3::new(0.4, 0.2, 0.76),
+            Vec3::empty_vec(),
+            10.0,
+        )),
+        Object::Circle(Circle::from_color(
+            Vec3::new(2.0, -3.0, -10.0),
+            2.0,
+            &Vec3::new(0.4, 0.2, 0.76),
+        )),
+        Object::Triangle(Triangle::from_color(
+            Vec3::new(2.0, -3.0, -10.0),
+            Vec3::new(0.5, -3.0, -9.0),
+            Vec3::new(1.5, -1.5, -11.0),
+            &Vec3::new(0.4, 0.2, 0.76),
+        )),
+    ];
+
     for (x, y, pixel) in img.enumerate_pixels_mut() {
         let ray = get_ray(&eye, x, y, 1600, 900);
-        let px_color = get_color(&ray, &eye);
+        let px_color = get_color(&ray, &eye, &objs);
         *pixel = Rgb([
             (px_color.x * 255.0) as u8,
             (px_color.y * 255.0) as u8,
@@ -58,5 +84,5 @@ fn main() {
         ]);
     }
 
-    img.save("test2.png").unwrap();
+    img.save("test3.png").unwrap();
 }
