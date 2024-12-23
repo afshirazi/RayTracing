@@ -42,7 +42,7 @@ fn get_color(ray: &Vec3, origin: &Vec3, objects: &Vec<Object>) -> Vec3 {
         };
 
         if intersect.z > z_buf {
-            color_buf = 
+            // color_buf = 
         }
     }
 
