@@ -37,11 +37,7 @@ fn get_color(ray: &Vec3, origin: &Vec3, objects: &Vec<Object>) -> Vec3 {
     let mut z_buf = f64::NEG_INFINITY;
     let mut obj_idx = None;
 
-    let light = Light::new(
-        Vec3::new(1.3, -22.0, 10.0),
-        Vec3::new(1.0, 1.0, 1.0),
-        Vec3::new(1.0, 1.0, 1.0),
-    );
+    let light = Light::default_light();
 
     for (idx, obj) in objects.iter().enumerate() {
         let intersect = match obj.get_intersect(ray, origin) {
