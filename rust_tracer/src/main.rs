@@ -33,26 +33,52 @@ fn get_ray(eye: &Vec3, x: u32, y: u32, w: u32, h: u32) -> Vec3 {
 }
 
 fn get_color(ray: &Vec3, origin: &Vec3, objects: &Vec<Object>) -> Vec3 {
-    let mut color_buf = Vec3::new(0.3, 0.3, 0.3);
-    let mut z_buf = f64::NEG_INFINITY;
-    let mut obj_idx = None;
+    // let mut color_buf = Vec3::new(0.3, 0.3, 0.3);
+    // let mut z_buf = f64::NEG_INFINITY;
+    // let mut obj_idx = None;
 
     let light = Light::default_light();
 
-    for (idx, obj) in objects.iter().enumerate() {
-        let intersect = match obj.get_intersect(ray, origin) {
-            Some(point) => point,
-            None => continue,
-        };
+    // for (idx, obj) in objects.iter().enumerate() {
+    //     let intersect = match obj.get_intersect(ray, origin) {
+    //         Some(point) => point,
+    //         None => continue,
+    //     };
 
-        if intersect.z > z_buf {
-            z_buf = intersect.z;
-            obj_idx = Some(idx);
-        }
-    }
+    //     if intersect.z > z_buf {
+    //         z_buf = intersect.z;
+    //         obj_idx = Some(idx);
+    //     }
+    // }
+    let obj_opt = objects
+        .iter()
+        .map(|obj| (obj, obj.get_intersect(ray, origin)))
+        .filter(|(_, res)| res.is_some())
+        .map(|(o, res)| (o, res.unwrap().z))
+        .max_by(|x, y| x.1.total_cmp(&y.1))
+        .map(|(o, _)| o);
+    // if let Some(idx) = obj_idx {
+    //     let obj = objects.get(idx).unwrap();
+    //     let intr_point = obj.get_intersect(ray, origin).unwrap();
+    //     let normal = obj.get_normal(&intr_point);
 
-    if let Some(idx) = obj_idx {
-        let obj = objects.get(idx).unwrap();
+    //     let light_dir = (&light.pos - &intr_point).norm();
+    //     let light_refl = (&(2.0 * (light_dir.dot(&normal)) * &normal) - &light_dir).norm();
+
+    //     let diffuse_term = light_dir.dot(&normal); // doubles to check if light is on correct side of object
+    //     let spec_term = (origin - &intr_point).norm().dot(&light_refl);
+    //     if diffuse_term > 0.0 {
+    //         let r = obj.get_diff().x * diffuse_term * light.diff.x
+    //             + obj.get_spec().x * spec_term.powf(obj.get_shin()) * light.spec.x;
+    //         let g = obj.get_diff().y * diffuse_term * light.diff.y
+    //             + obj.get_spec().y * spec_term.powf(obj.get_shin()) * light.spec.y;
+    //         let b = obj.get_diff().z * diffuse_term * light.diff.z
+    //             + obj.get_spec().z * spec_term.powf(obj.get_shin()) * light.spec.z;
+
+    //         color_buf = Vec3::new(r, g, b);
+    //     }
+    // }
+    if let Some(obj) = obj_opt {
         let intr_point = obj.get_intersect(ray, origin).unwrap();
         let normal = obj.get_normal(&intr_point);
 
@@ -69,11 +95,13 @@ fn get_color(ray: &Vec3, origin: &Vec3, objects: &Vec<Object>) -> Vec3 {
             let b = obj.get_diff().z * diffuse_term * light.diff.z
                 + obj.get_spec().z * spec_term.powf(obj.get_shin()) * light.spec.z;
 
-            color_buf = Vec3::new(r, g, b);
+            // color_buf = Vec3::new(r, g, b);
+            return Vec3::new(r, g, b);
         }
     }
 
-    color_buf
+    // color_buf
+    Vec3::new(0.3, 0.3, 0.3)
 }
 
 fn main() {
@@ -85,18 +113,18 @@ fn main() {
             Vec3::new(2.0, -3.0, -10.0),
             2.0,
             Vec3::new(0.4, 0.2, 0.76),
-            Vec3::empty_vec(),
+            Vec3::new(0.4, 0.2, 0.76),
             10.0,
         )),
         Object::Circle(Circle::from_color(
-            Vec3::new(2.0, -3.0, -10.0),
+            Vec3::new(-2.0, 3.0, -10.0),
             2.0,
             &Vec3::new(0.4, 0.2, 0.76),
         )),
         Object::Triangle(Triangle::from_color(
+            Vec3::new(-4.5, -3.0, -9.0),
             Vec3::new(2.0, -3.0, -10.0),
-            Vec3::new(0.5, -3.0, -9.0),
-            Vec3::new(1.5, -1.5, -11.0),
+            Vec3::new(-3.5, 1.5, -11.0),
             &Vec3::new(0.4, 0.2, 0.76),
         )),
     ];
@@ -113,5 +141,5 @@ fn main() {
         ]);
     }
 
-    img.save("test1.png").unwrap();
+    img.save("test6.png").unwrap();
 }
