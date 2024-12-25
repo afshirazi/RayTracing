@@ -32,12 +32,37 @@ fn get_ray(eye: &Vec3, x: u32, y: u32, w: u32, h: u32) -> Vec3 {
     (&p - eye).norm()
 }
 
-fn get_color(ray: &Vec3, origin: &Vec3, objects: &Vec<Object>) -> Vec3 {
-    let mut color_buf = Vec3::new(0.3, 0.3, 0.3);
+fn shadow_rays<'a>(
+    point: &Vec3,
+    main_obj: &Object,
+    objects: &Vec<Object>,
+    lights: &'a Vec<Light>,
+) -> Vec<&'a Light> {
+    let mut vis_lights = vec![];
+    'light_loop: for light in lights {
+        let light_dir = (&light.pos - point).norm();
+
+        for object in objects {
+            if object == main_obj {
+                continue;
+            }
+
+            match object.get_intersect(&light_dir, point) {
+                Some(_q) => continue 'light_loop,
+                None => (),
+            }
+        }
+
+        vis_lights.push(light);
+    }
+
+    vis_lights
+}
+
+fn get_color(ray: &Vec3, origin: &Vec3, objects: &Vec<Object>, lights: &Vec<Light>) -> Vec3 {
+    let mut color_buf = Vec3::new(0.0, 0.0, 0.0);
     let mut z_buf = f64::NEG_INFINITY;
     let mut obj_idx = None;
-
-    let light = Light::default_light();
 
     for (idx, obj) in objects.iter().enumerate() {
         let intersect = match obj.get_intersect(ray, origin) {
@@ -50,26 +75,30 @@ fn get_color(ray: &Vec3, origin: &Vec3, objects: &Vec<Object>) -> Vec3 {
             obj_idx = Some(idx);
         }
     }
-    
-    if let Some(idx) = obj_idx {
-        let obj = objects.get(idx).unwrap();
-        let intr_point = obj.get_intersect(ray, origin).unwrap();
-        let normal = obj.get_normal(&intr_point);
 
+    if obj_idx.is_none() {
+        return Vec3::new(0.3, 0.3, 0.3);
+    }
+
+    let obj = objects.get(obj_idx.unwrap()).unwrap();
+    let intr_point = obj.get_intersect(ray, origin).unwrap();
+    let normal = obj.get_normal(&intr_point);
+
+    let vis_lights = shadow_rays(&intr_point, obj, objects, lights);
+
+    for light in vis_lights {
         let light_dir = (&light.pos - &intr_point).norm();
         let light_refl = (&(2.0 * (light_dir.dot(&normal)) * &normal) - &light_dir).norm();
 
         let diffuse_term = light_dir.dot(&normal); // doubles to check if light is on correct side of object
         let spec_term = (origin - &intr_point).norm().dot(&light_refl);
         if diffuse_term > 0.0 {
-            let r = obj.get_diff().x * diffuse_term * light.diff.x
+            color_buf.x += obj.get_diff().x * diffuse_term * light.diff.x
                 + obj.get_spec().x * spec_term.powf(obj.get_shin()) * light.spec.x;
-            let g = obj.get_diff().y * diffuse_term * light.diff.y
+            color_buf.y += obj.get_diff().y * diffuse_term * light.diff.y
                 + obj.get_spec().y * spec_term.powf(obj.get_shin()) * light.spec.y;
-            let b = obj.get_diff().z * diffuse_term * light.diff.z
+            color_buf.z += obj.get_diff().z * diffuse_term * light.diff.z
                 + obj.get_spec().z * spec_term.powf(obj.get_shin()) * light.spec.z;
-
-            color_buf = Vec3::new(r, g, b);
         }
     }
 
@@ -101,17 +130,28 @@ fn main() {
         )),
     ];
 
-    // let lights = vec![Light::new(Vec3::new(1.3, -22.0, 10.0), Vec3::new(1.0, 1.0, 1.0), Vec3::new(1.0, 1.0, 1.0))];
+    let lights = vec![
+        Light::new(
+            Vec3::new(1.3, -22.0, 10.0),
+            Vec3::new(1.0, 1.0, 1.0),
+            Vec3::new(1.0, 1.0, 1.0),
+        ),
+        Light::new(
+            Vec3::new(-1.3, 22.0, 10.0),
+            Vec3::new(1.0, 1.0, 1.0),
+            Vec3::new(1.0, 1.0, 1.0),
+        ),
+    ];
 
     for (x, y, pixel) in img.enumerate_pixels_mut() {
         let ray = get_ray(&eye, x, y, 1600, 900);
-        let px_color = get_color(&ray, &eye, &objs);
+        let px_color = get_color(&ray, &eye, &objs, &lights);
         *pixel = Rgb([
-            (px_color.x * 255.0) as u8,
-            (px_color.y * 255.0) as u8,
-            (px_color.z * 255.0) as u8,
+            (px_color.x.clamp(0.0, 1.0) * 255.0) as u8,
+            (px_color.y.clamp(0.0, 1.0) * 255.0) as u8,
+            (px_color.z.clamp(0.0, 1.0) * 255.0) as u8,
         ]);
     }
 
-    img.save("test6.png").unwrap();
+    img.save("test_del.png").unwrap();
 }

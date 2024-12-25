@@ -66,3 +66,13 @@ impl RayOps for Object {
         }
     }
 }
+
+impl PartialEq for Object {
+    fn eq(&self, other: &Self) -> bool {
+        match (self, other) {
+            (Self::Circle(l), Self::Circle(r)) => l == r,
+            (Self::Triangle(l), Self::Triangle(r)) => l == r,
+            _ => false,
+        }
+    }
+}

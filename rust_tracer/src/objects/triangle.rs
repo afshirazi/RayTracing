@@ -70,7 +70,11 @@ impl RayOps for Triangle {
         }
 
         let t = inv_det * s_cross_e1.dot(&e2);
-        Some(origin + &(ray * t))
+        if t > EPSILON {
+            Some(origin + &(ray * t))
+        } else { // t is negative, there is a line intersection but in the opposite direction of the ray.
+            None
+        }
     }
 
     fn get_normal(&self, _point: &Vec3) -> Vec3 {
