@@ -105,7 +105,7 @@ fn get_color(
         let light_dir = (&light.pos - &intr_point).norm();
         let light_refl = (&(2.0 * (light_dir.dot(&normal)) * &normal) - &light_dir).norm();
 
-        let light_intensity = Vec3::euclid_dist_sq(&light.pos, &intr_point).recip();
+        let light_intensity = 250.0 * Vec3::euclid_dist_sq(&light.pos, &intr_point).recip(); // TODO remove hardcode
 
         let diffuse_term = light_dir.dot(&normal); // doubles to check if light is on correct side of object
         let spec_term = (origin - &intr_point).norm().dot(&light_refl);
@@ -155,7 +155,7 @@ fn main() {
 
     let lights = vec![
         Light::new(
-            Vec3::new(1.3, -22.0, 10.0),
+            Vec3::new(2.3, -12.0, -3.0),
             Vec3::new(1.0, 1.0, 1.0),
             Vec3::new(1.0, 1.0, 1.0),
         ),
@@ -176,5 +176,5 @@ fn main() {
         ]);
     }
 
-    img.save("test_del.png").unwrap();
+    img.save("test_intensity4.png").unwrap();
 }
