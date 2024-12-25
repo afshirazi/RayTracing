@@ -79,7 +79,7 @@ fn get_color(
         .map(|obj| (obj, obj.get_intersect(ray, origin)))
         .filter(|(_, intr)| intr.is_some())
         .map(|(obj, intr)| (obj, intr.unwrap()))
-        .max_by(|(_, lv), (_, rv)| {
+        .min_by(|(_, lv), (_, rv)| {
             let ld = Vec3::euclid_dist_sq(lv, origin);
             let rd = Vec3::euclid_dist_sq(rv, origin);
             ld.total_cmp(&rd)
@@ -146,7 +146,7 @@ fn main() {
 
     let objs = vec![
         Object::Circle(Circle::new(
-            Vec3::new(2.0, -3.0, -10.0),
+            Vec3::new(2.0, -4.0, -10.0),
             2.0,
             Vec3::new(0.4, 0.2, 0.76),
             Vec3::new(0.4, 0.2, 0.76),
@@ -188,5 +188,5 @@ fn main() {
         ]);
     }
 
-    img.save("test_intensity4.png").unwrap();
+    img.save("test_recursive5.png").unwrap();
 }
