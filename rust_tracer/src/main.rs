@@ -59,28 +59,42 @@ fn shadow_rays<'a>(
     vis_lights
 }
 
-fn get_color(ray: &Vec3, origin: &Vec3, objects: &Vec<Object>, lights: &Vec<Light>, depth: u8) -> Vec3 {
+fn get_color(
+    ray: &Vec3,
+    origin: &Vec3,
+    objects: &Vec<Object>,
+    lights: &Vec<Light>,
+    depth: u8,
+) -> Vec3 {
     let mut color_buf = Vec3::new(0.0, 0.0, 0.0);
-    let mut z_buf = f64::NEG_INFINITY;
-    let mut obj_idx = None;
+    // let mut z_buf = f64::NEG_INFINITY;
+    // let mut obj_idx = None;
 
-    for (idx, obj) in objects.iter().enumerate() {
-        let intersect = match obj.get_intersect(ray, origin) {
-            Some(point) => point,
-            None => continue,
-        };
+    // for (idx, obj) in objects.iter().enumerate() {
+    //     let intersect = match obj.get_intersect(ray, origin) {
+    //         Some(point) => point,
+    //         None => continue,
+    //     };
 
-        if intersect.z > z_buf {
-            z_buf = intersect.z;
-            obj_idx = Some(idx);
-        }
-    }
+    //     if intersect.z > z_buf {
+    //         z_buf = intersect.z;
+    //         obj_idx = Some(idx);
+    //     }
+    // }
 
-    if obj_idx.is_none() {
+    let intr_obj = objects
+        .iter()
+        .map(|obj| (obj, obj.get_intersect(ray, origin)))
+        .filter(|(_, intr)| intr.is_some())
+        .map(|(obj, intr)| (obj, intr.unwrap().z))
+        .max_by(|(_, lz), (_, rz)| lz.total_cmp(rz))
+        .map(|(obj, _)| obj);
+
+    if intr_obj.is_none() {
         return Vec3::new(0.3, 0.3, 0.3);
     }
 
-    let intr_obj = objects.get(obj_idx.unwrap()).unwrap();
+    let intr_obj = intr_obj.unwrap();
     let intr_point = intr_obj.get_intersect(ray, origin).unwrap();
     let normal = intr_obj.get_normal(&intr_point);
 
