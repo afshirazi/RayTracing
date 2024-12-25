@@ -68,28 +68,23 @@ fn get_color(
     depth: u8,
 ) -> Vec3 {
     let mut color_buf = Vec3::new(0.0, 0.0, 0.0);
-    // let mut z_buf = f64::NEG_INFINITY;
-    // let mut obj_idx = None;
 
-    // for (idx, obj) in objects.iter().enumerate() {
-    //     let intersect = match obj.get_intersect(ray, origin) {
-    //         Some(point) => point,
-    //         None => continue,
-    //     };
+    let filtered_objects: Vec<&Object> = match src_obj {
+        Some(o) => objects.iter().filter(|other_obj| *other_obj != o).collect(),
+        None => objects.iter().collect(),
+    };
 
-    //     if intersect.z > z_buf {
-    //         z_buf = intersect.z;
-    //         obj_idx = Some(idx);
-    //     }
-    // }
-
-    let intr_obj = objects
+    let intr_obj = filtered_objects
         .iter()
         .map(|obj| (obj, obj.get_intersect(ray, origin)))
         .filter(|(_, intr)| intr.is_some())
-        .map(|(obj, intr)| (obj, intr.unwrap().z))
-        .max_by(|(_, lz), (_, rz)| lz.total_cmp(rz))
-        .map(|(obj, _)| obj);
+        .map(|(obj, intr)| (obj, intr.unwrap()))
+        .max_by(|(_, lv), (_, rv)| {
+            let ld = Vec3::euclid_dist_sq(lv, origin);
+            let rd = Vec3::euclid_dist_sq(rv, origin);
+            ld.total_cmp(&rd)
+        })
+        .map(|(obj, _)| *obj);
 
     if intr_obj.is_none() {
         return Vec3::new(0.3, 0.3, 0.3);
@@ -111,18 +106,35 @@ fn get_color(
         let spec_term = (origin - &intr_point).norm().dot(&light_refl);
         if diffuse_term > 0.0 {
             color_buf.x += intr_obj.get_diff().x * diffuse_term * light.diff.x * light_intensity
-                + intr_obj.get_spec().x * spec_term.powf(intr_obj.get_shin()) * light.spec.x * light_intensity;
+                + intr_obj.get_spec().x
+                    * spec_term.powf(intr_obj.get_shin())
+                    * light.spec.x
+                    * light_intensity;
             color_buf.y += intr_obj.get_diff().y * diffuse_term * light.diff.y * light_intensity
-                + intr_obj.get_spec().y * spec_term.powf(intr_obj.get_shin()) * light.spec.y * light_intensity;
+                + intr_obj.get_spec().y
+                    * spec_term.powf(intr_obj.get_shin())
+                    * light.spec.y
+                    * light_intensity;
             color_buf.z += intr_obj.get_diff().z * diffuse_term * light.diff.z * light_intensity
-                + intr_obj.get_spec().z * spec_term.powf(intr_obj.get_shin()) * light.spec.z * light_intensity;
+                + intr_obj.get_spec().z
+                    * spec_term.powf(intr_obj.get_shin())
+                    * light.spec.z
+                    * light_intensity;
         }
     }
 
     if depth > 0 && intr_obj.get_spec().dot(intr_obj.get_spec()) > 0.3 {
         let in_ray = origin - &intr_point;
         let refl_ray = (&(2.0 * (in_ray.dot(&normal)) * &normal) - &in_ray).norm();
-        color_buf = color_buf + get_color(&refl_ray, &intr_point, objects, lights, Some(intr_obj), depth - 1);
+        color_buf = color_buf
+            + get_color(
+                &refl_ray,
+                &intr_point,
+                objects,
+                lights,
+                Some(intr_obj),
+                depth - 1,
+            );
     }
 
     color_buf
@@ -168,7 +180,7 @@ fn main() {
 
     for (x, y, pixel) in img.enumerate_pixels_mut() {
         let ray = get_ray(&eye, x, y, 1600, 900);
-        let px_color = get_color(&ray, &eye, &objs, &lights, None, 0);
+        let px_color = get_color(&ray, &eye, &objs, &lights, None, 2);
         *pixel = Rgb([
             (px_color.x.clamp(0.0, 1.0) * 255.0) as u8,
             (px_color.y.clamp(0.0, 1.0) * 255.0) as u8,
