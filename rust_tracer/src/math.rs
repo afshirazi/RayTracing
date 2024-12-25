@@ -58,7 +58,7 @@ impl Vec3 {
         let dy = v1.y - v2.y;
         let dz = v1.z - v2.z;
 
-        dx * dx - dy * dy - dz * dz
+        dx * dx + dy * dy + dz * dz
     }
 }
 
