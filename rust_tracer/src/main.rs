@@ -59,7 +59,7 @@ fn shadow_rays<'a>(
     vis_lights
 }
 
-fn get_color(ray: &Vec3, origin: &Vec3, objects: &Vec<Object>, lights: &Vec<Light>) -> Vec3 {
+fn get_color(ray: &Vec3, origin: &Vec3, objects: &Vec<Object>, lights: &Vec<Light>, depth: u8) -> Vec3 {
     let mut color_buf = Vec3::new(0.0, 0.0, 0.0);
     let mut z_buf = f64::NEG_INFINITY;
     let mut obj_idx = None;
@@ -80,11 +80,11 @@ fn get_color(ray: &Vec3, origin: &Vec3, objects: &Vec<Object>, lights: &Vec<Ligh
         return Vec3::new(0.3, 0.3, 0.3);
     }
 
-    let obj = objects.get(obj_idx.unwrap()).unwrap();
-    let intr_point = obj.get_intersect(ray, origin).unwrap();
-    let normal = obj.get_normal(&intr_point);
+    let intr_obj = objects.get(obj_idx.unwrap()).unwrap();
+    let intr_point = intr_obj.get_intersect(ray, origin).unwrap();
+    let normal = intr_obj.get_normal(&intr_point);
 
-    let vis_lights = shadow_rays(&intr_point, obj, objects, lights);
+    let vis_lights = shadow_rays(&intr_point, intr_obj, objects, lights);
 
     for light in vis_lights {
         let light_dir = (&light.pos - &intr_point).norm();
@@ -93,13 +93,19 @@ fn get_color(ray: &Vec3, origin: &Vec3, objects: &Vec<Object>, lights: &Vec<Ligh
         let diffuse_term = light_dir.dot(&normal); // doubles to check if light is on correct side of object
         let spec_term = (origin - &intr_point).norm().dot(&light_refl);
         if diffuse_term > 0.0 {
-            color_buf.x += obj.get_diff().x * diffuse_term * light.diff.x
-                + obj.get_spec().x * spec_term.powf(obj.get_shin()) * light.spec.x;
-            color_buf.y += obj.get_diff().y * diffuse_term * light.diff.y
-                + obj.get_spec().y * spec_term.powf(obj.get_shin()) * light.spec.y;
-            color_buf.z += obj.get_diff().z * diffuse_term * light.diff.z
-                + obj.get_spec().z * spec_term.powf(obj.get_shin()) * light.spec.z;
+            color_buf.x += intr_obj.get_diff().x * diffuse_term * light.diff.x
+                + intr_obj.get_spec().x * spec_term.powf(intr_obj.get_shin()) * light.spec.x;
+            color_buf.y += intr_obj.get_diff().y * diffuse_term * light.diff.y
+                + intr_obj.get_spec().y * spec_term.powf(intr_obj.get_shin()) * light.spec.y;
+            color_buf.z += intr_obj.get_diff().z * diffuse_term * light.diff.z
+                + intr_obj.get_spec().z * spec_term.powf(intr_obj.get_shin()) * light.spec.z;
         }
+    }
+
+    if depth > 0 && intr_obj.get_spec().dot(intr_obj.get_spec()) > 0.3 {
+        let in_ray = origin - &intr_point;
+        let refl_ray = (&(2.0 * (in_ray.dot(&normal)) * &normal) - &in_ray).norm();
+        color_buf = color_buf + get_color(&refl_ray, &intr_point, objects, lights, depth - 1);
     }
 
     color_buf
