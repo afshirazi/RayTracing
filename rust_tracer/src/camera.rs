@@ -24,7 +24,7 @@ impl Camera {
             look_at,
             d: 1.0 / (fov_y / 2.0).tan(),
             samples_per_px,
-            sample_scale: (samples_per_px as f64).recip()
+            sample_scale: (samples_per_px as f64).recip(),
         }
     }
 
@@ -36,10 +36,16 @@ impl Camera {
                 px_color = px_color + Self::get_color(&ray, &self.eye, objects, lights, None, 5);
             }
             px_color = px_color * self.sample_scale;
+
+            // sqrt() for gamma correction (maybe) (idk how it works) 
+            let r = (px_color.x.sqrt().clamp(0.0, 1.0) * 255.0);
+            let g=(px_color.y.sqrt().clamp(0.0, 1.0) * 255.0);
+            let b=(px_color.z.sqrt().clamp(0.0, 1.0) * 255.0);
+
             *pixel = Rgb([
-                (px_color.x.clamp(0.0, 1.0) * 255.0) as u8,
-                (px_color.y.clamp(0.0, 1.0) * 255.0) as u8,
-                (px_color.z.clamp(0.0, 1.0) * 255.0) as u8,
+                r as u8,
+                g as u8,
+                b as u8,
             ]);
         }
     }
@@ -55,9 +61,7 @@ impl Camera {
         let offset_y = (random::<f64>() - 0.5 + y as f64) / h as f64;
 
         let top_left = &(&self.eye + &(self.d * &l) - (wh_ratio * &v)) - &u;
-        let p = top_left
-            + (2.0 * wh_ratio * &v * offset_x)
-            + (2.0 * &u * offset_y);
+        let p = top_left + (2.0 * wh_ratio * &v * offset_x) + (2.0 * &u * offset_y);
 
         (&p - &self.eye).norm()
     }
@@ -168,7 +172,7 @@ impl Camera {
                     lights,
                     Some(intr_obj),
                     depth - 1,
-                );
+                ) * 0.5;
         }
 
         color_buf
