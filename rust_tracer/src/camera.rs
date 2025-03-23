@@ -37,16 +37,12 @@ impl Camera {
             }
             px_color = px_color * self.sample_scale;
 
-            // sqrt() for gamma correction (maybe) (idk how it works) 
-            let r = (px_color.x.sqrt().clamp(0.0, 1.0) * 255.0);
-            let g=(px_color.y.sqrt().clamp(0.0, 1.0) * 255.0);
-            let b=(px_color.z.sqrt().clamp(0.0, 1.0) * 255.0);
+            // sqrt() for gamma correction (maybe) (idk how it works)
+            let r = px_color.x.sqrt().clamp(0.0, 1.0) * 255.0;
+            let g = px_color.y.sqrt().clamp(0.0, 1.0) * 255.0;
+            let b = px_color.z.sqrt().clamp(0.0, 1.0) * 255.0;
 
-            *pixel = Rgb([
-                r as u8,
-                g as u8,
-                b as u8,
-            ]);
+            *pixel = Rgb([r as u8, g as u8, b as u8]);
         }
     }
 
