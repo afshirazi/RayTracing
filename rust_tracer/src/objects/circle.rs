@@ -62,15 +62,15 @@ impl RayOps for Circle {
     fn get_normal(&self, point: &Vec3) -> Vec3 {
         (point - &self.center).norm()
     }
-    
+
     fn get_diff(&self) -> &Vec3 {
         &self.diff
     }
-    
+
     fn get_spec(&self) -> &Vec3 {
         &self.spec
     }
-    
+
     fn get_shin(&self) -> f64 {
         self.shin
     }
@@ -82,7 +82,6 @@ impl PartialEq for Circle {
         self.center == other.center && self.radius == other.radius
     }
 }
-
 
 #[cfg(test)]
 mod test {
@@ -101,7 +100,10 @@ mod test {
         let ray = Vec3::new(0.0, 0.0, -1.0);
         let origin = Vec3::empty_vec();
 
-        assert_eq!(c.get_intersect(&ray, &origin).unwrap(), Vec3::new(0.0, 0.0, -2.0));
+        assert_eq!(
+            c.get_intersect(&ray, &origin).unwrap(),
+            Vec3::new(0.0, 0.0, -2.0)
+        );
     }
 
     #[test]

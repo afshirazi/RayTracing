@@ -51,10 +51,10 @@ fn main() {
         Vec3::new(0.0, 1.0, 0.0),
         Vec3::new(0.0, 0.0, -1.0),
         90_f64.to_radians(),
-        20
+        20,
     );
 
     camera.render(&objects, &lights, &mut img);
 
-    img.save("render_sampling_1.png").unwrap();
+    img.save("le_benchmark.png").unwrap();
 }
