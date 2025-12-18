@@ -8,6 +8,8 @@ mod camera;
 mod light;
 mod math;
 mod objects;
+mod integrator;
+mod sampler;
 
 fn main() {
     let mut img = RgbImage::new(1600, 900);
