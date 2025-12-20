@@ -58,5 +58,5 @@ fn main() {
 
     camera.render(&objects, &lights, &mut img);
 
-    img.save("le_benchmark.png").unwrap();
+    img.save("try_after_refactor.png").unwrap();
 }
