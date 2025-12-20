@@ -63,7 +63,7 @@ impl RayOps for Triangle {
         }
 
         let s_cross_e1 = s.cross(&e1);
-        let v = inv_det * s_cross_e1.dot(&ray);
+        let v = inv_det * s_cross_e1.dot(ray);
 
         if v < 0.0 || (u + v) > 1.0 {
             return None;

@@ -31,10 +31,7 @@ impl Integrator for SimplePathIntegrator {
                     continue;
                 }
 
-                match object.get_intersect(&light_dir, point) {
-                    Some(_) => continue 'light_loop,
-                    None => (),
-                }
+                if let Some(_) = object.get_intersect(&light_dir, point) { continue 'light_loop }
             }
 
             vis_lights.push(light);
