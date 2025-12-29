@@ -10,6 +10,7 @@ mod math;
 mod objects;
 mod integrator;
 mod sampler;
+mod bxdf;
 
 fn main() {
     let mut img = RgbImage::new(1600, 900);
