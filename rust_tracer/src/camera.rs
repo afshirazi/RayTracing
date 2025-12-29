@@ -31,7 +31,7 @@ impl Camera {
         struct TempSampler;
         impl Sampler for TempSampler {}
         let temp_sampler = TempSampler;
-        // ^^^^^^ This is all temporary garbage
+        // ^^^^^^ This is all temporary garbage TODO: remove
 
         for (x, y, pixel) in img.enumerate_pixels_mut() {
             let mut px_color = Vec3::empty_vec();
