@@ -96,6 +96,10 @@ impl RayOps for Triangle {
     fn get_shin(&self) -> f64 {
         self.shin
     }
+    
+    fn get_tangent(&self, _: &Vec3) -> Vec3 {
+        ((&self.c - &self.a) + (&self.c - &self.b)).norm()
+    }
 }
 
 // equal if same dimensions, not necessarily same object

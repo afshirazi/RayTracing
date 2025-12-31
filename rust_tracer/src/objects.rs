@@ -17,6 +17,10 @@ pub trait RayOps {
     /// same for any input if it's a triangle. Expects a valid point on the
     /// surface, does not check for validity.
     fn get_normal(&self, point: &Vec3) -> Vec3;
+    
+    /// Returns a tangent vector to the surface of the shape
+    /// Expects a valid point on the surface.
+    fn get_tangent(&self, point: &Vec3) -> Vec3;
 
     fn get_diff(&self) -> &Vec3;
 
@@ -63,6 +67,13 @@ impl RayOps for Object {
         match self {
             Object::Circle(c) => c.get_shin(),
             Object::Triangle(tri) => tri.get_shin(),
+        }
+    }
+    
+    fn get_tangent(&self, point: &Vec3) -> Vec3 {
+        match self {
+            Object::Circle(circle) => circle.get_tangent(point),
+            Object::Triangle(triangle) => triangle.get_tangent(point),
         }
     }
 }
