@@ -13,11 +13,16 @@ impl Frame {
         Self { x, y, z }
     }
 
-    pub fn to_local(&self, v: Vec3) -> Vec3 {
+    pub fn from_xz(x: Vec3, z: Vec3) -> Self {
+        let y = z.cross(&x);
+        Self { x, y, z }
+    }
+
+    pub fn to_local(&self, v: &Vec3) -> Vec3 {
         Vec3::new(v.dot(&self.x), v.dot(&self.y), v.dot(&self.z))
     }
 
-    pub fn from_local(&self, v: Vec3) -> Vec3 {
+    pub fn from_local(&self, v: &Vec3) -> Vec3 {
         v.x * &self.x + v.y * &self.y + v.z * &self.z
     }
 }
