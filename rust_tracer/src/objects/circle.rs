@@ -79,9 +79,9 @@ impl RayOps for Circle {
         let a = (point.x * point.x + self.center.x * self.center.x) / 2f64 * point.x * self.center.x;
         let b = (point.y * point.y + self.center.y * self.center.y) / 2f64 * point.y * self.center.y;
         // let c = (point.z * point.z + self.center.z * self.center.z) / 2f64 * point.z * self.center.z; // c should be the one unneeded
-        // let d = self.radius * self.radius; //maybe unneeded?
+        // let d = self.radius * self.radius; // unneeded
 
-        Vec3::new(a.recip(), b.recip(), 0f64).norm()
+        Vec3::new(-a.recip(), b.recip(), 0f64).norm()
     }
 }
 
