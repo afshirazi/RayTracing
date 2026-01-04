@@ -13,6 +13,12 @@ pub struct BsdfSample {
     pdf: f32,
 }
 
+impl BsdfSample {
+    pub fn new(color: Vec3, w_i: Vec3, pdf: f32) -> Self {
+        Self { color, w_i, pdf }
+    }
+}
+
 // may add TransportMode later
 
 pub trait Bxdf {
@@ -37,14 +43,17 @@ impl<T: Bxdf> Bxdf for Bsdf<T> {
         self.bxdf.f(&local_w_o, &local_w_i)
     }
 
-    fn sample_f(&self, w_o: &Vec3, u: f32, uc: (f32, f32)) -> Option<BsdfSample> {
+    fn sample_f(&self, w_o: &Vec3, uc: f32, u: (f32, f32)) -> Option<BsdfSample> {
         let local_w_o = self.frame.to_local(w_o);
-        let mut bs = self.bxdf.sample_f(&local_w_o, u, uc)?;
+        let mut bs = self.bxdf.sample_f(&local_w_o, uc, u)?;
         if bs.pdf == 0.0 || bs.w_i.z == 0.0 {
-            return None
+            return None;
         }
         bs.w_i = self.frame.from_local(&bs.w_i);
         Some(bs)
     }
 }
 
+pub fn same_hemisphere(w: &Vec3, wp: &Vec3) -> bool {
+    w.z * wp.z > 0.0
+}
