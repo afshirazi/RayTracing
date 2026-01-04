@@ -1,6 +1,7 @@
 mod vec3;
 mod frame;
 
+use core::f32;
 use std::f32;
 
 pub use vec3::Vec3;
@@ -27,4 +28,8 @@ fn sample_cosine_hemisphere(u: (f32, f32)) -> Vec3 {
     let d = sample_uniform_disk_concentric(u);
     let z = (1.0 - d.0 * d.0 - d.1 * d.1).sqrt().max(0.0);
     Vec3::new(d.0 as f64, d.1 as f64, z as f64)
+}
+
+fn cosine_hemisphere_pdf(cos_theta: f32) -> f32 {
+    cos_theta * f32::consts::FRAC_1_PI
 }
