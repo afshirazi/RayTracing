@@ -1,7 +1,6 @@
 mod vec3;
 mod frame;
 
-use core::f32;
 use std::f32;
 
 pub use vec3::Vec3;
