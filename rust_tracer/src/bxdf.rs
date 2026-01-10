@@ -1,9 +1,16 @@
-use crate::math::{Frame, Vec3};
+use crate::{
+    bxdf::diffuse_bxdf::DiffuseBxdf,
+    math::{Frame, Vec3},
+};
 
 pub mod diffuse_bxdf;
 
-pub struct Bsdf<T: Bxdf> {
-    bxdf: T,
+pub enum Bxdfs {
+    Diffuse(DiffuseBxdf),
+}
+
+pub struct Bsdf {
+    bxdf: Bxdfs,
     frame: Frame,
 }
 
@@ -27,8 +34,8 @@ pub trait Bxdf {
     //fn pdf();
 }
 
-impl<T: Bxdf> Bsdf<T> {
-    pub fn new(normal: Vec3, dpdus: Vec3, bxdf: T) -> Self {
+impl Bsdf {
+    pub fn new(normal: Vec3, dpdus: Vec3, bxdf: Bxdfs) -> Self {
         Self {
             bxdf,
             frame: Frame::from_xz(dpdus.norm(), normal),
@@ -36,7 +43,7 @@ impl<T: Bxdf> Bsdf<T> {
     }
 }
 
-impl<T: Bxdf> Bxdf for Bsdf<T> {
+impl Bxdf for Bsdf {
     fn f(&self, w_o: &Vec3, w_i: &Vec3) -> Vec3 {
         let local_w_o = self.frame.to_local(w_o);
         let local_w_i = self.frame.to_local(w_i);
@@ -51,6 +58,20 @@ impl<T: Bxdf> Bxdf for Bsdf<T> {
         }
         bs.w_i = self.frame.from_local(&bs.w_i);
         Some(bs)
+    }
+}
+
+impl Bxdf for Bxdfs {
+    fn f(&self, w_o: &Vec3, w_i: &Vec3) -> Vec3 {
+        match self {
+            Bxdfs::Diffuse(diffuse_bxdf) => diffuse_bxdf.f(w_o, w_i),
+        }
+    }
+
+    fn sample_f(&self, w_o: &Vec3, u: f32, uc: (f32, f32)) -> Option<BsdfSample> {
+        match self {
+            Bxdfs::Diffuse(diffuse_bxdf) => diffuse_bxdf.sample_f(w_o, u, uc),
+        }
     }
 }
 
