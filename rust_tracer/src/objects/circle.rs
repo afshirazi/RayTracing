@@ -1,7 +1,7 @@
 use core::f64;
 
 use super::RayOps;
-use crate::math::Vec3;
+use crate::{bxdf::{Bsdf, Bxdfs, diffuse_bxdf::DiffuseBxdf}, math::Vec3};
 
 pub struct Circle {
     center: Vec3,
@@ -83,6 +83,14 @@ impl RayOps for Circle {
 
         Vec3::new(-a.recip(), b.recip(), 0f64).norm()
     }
+    
+    fn get_mat(&self, norm: &Vec3, dpdu: &Vec3) -> Bsdf {
+        //TODO: figure out references
+        let bxdf = DiffuseBxdf::new(self.diff.clone());
+        Bsdf::new(norm.clone(), dpdu.clone(), Bxdfs::Diffuse(bxdf))
+    }
+    
+    
 }
 
 // equal if same radius and center, not necessarily same object

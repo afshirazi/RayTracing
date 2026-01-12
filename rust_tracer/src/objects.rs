@@ -1,4 +1,4 @@
-use crate::math::Vec3;
+use crate::{bxdf::{Bsdf, Bxdf}, math::Vec3};
 
 pub mod circle;
 pub mod triangle;
@@ -21,6 +21,8 @@ pub trait RayOps {
     /// Returns a tangent vector to the surface of the shape
     /// Expects a valid point on the surface.
     fn get_tangent(&self, point: &Vec3) -> Vec3;
+
+    fn get_mat(&self, norm: &Vec3, dpdu: &Vec3) -> Bsdf;
 
     fn get_diff(&self) -> &Vec3;
 
@@ -74,6 +76,13 @@ impl RayOps for Object {
         match self {
             Object::Circle(circle) => circle.get_tangent(point),
             Object::Triangle(triangle) => triangle.get_tangent(point),
+        }
+    }
+    
+    fn get_mat(&self, norm: &Vec3, dpdu: &Vec3) -> Bsdf {
+        match self {
+            Object::Circle(circle) => circle.get_mat(norm, dpdu),
+            Object::Triangle(triangle) => triangle.get_mat(norm, dpdu),
         }
     }
 }
