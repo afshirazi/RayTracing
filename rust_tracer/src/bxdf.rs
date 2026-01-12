@@ -15,9 +15,9 @@ pub struct Bsdf {
 }
 
 pub struct BsdfSample {
-    color: Vec3,
-    w_i: Vec3,
-    pdf: f32,
+    pub color: Vec3,
+    pub w_i: Vec3,
+    pub pdf: f32,
 }
 
 impl BsdfSample {

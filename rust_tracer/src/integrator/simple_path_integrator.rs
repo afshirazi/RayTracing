@@ -1,4 +1,5 @@
 use crate::{
+    bxdf::Bxdf,
     integrator::Integrator,
     light::Light,
     math::Vec3,
@@ -31,7 +32,9 @@ impl Integrator for SimplePathIntegrator {
                     continue;
                 }
 
-                if let Some(_) = object.get_intersect(&light_dir, point) { continue 'light_loop }
+                if let Some(_) = object.get_intersect(&light_dir, point) {
+                    continue 'light_loop;
+                }
             }
 
             vis_lights.push(light);
@@ -75,6 +78,10 @@ impl Integrator for SimplePathIntegrator {
         let intr_obj = intr_obj.unwrap();
         let intr_point = intr_obj.get_intersect(ray, origin).unwrap();
         let normal = intr_obj.get_normal(&intr_point);
+        let tan = intr_obj.get_tangent(&intr_point);
+        let bsdf = intr_obj.get_mat(&normal, &tan);
+
+        let w_o = ray * -1.0;
 
         let vis_lights = Self::shadow_rays(&intr_point, intr_obj, objects, lights);
 
@@ -84,43 +91,27 @@ impl Integrator for SimplePathIntegrator {
 
             let light_intensity = 250.0 * Vec3::euclid_dist_sq(&light.pos, &intr_point).recip(); // TODO remove hardcode
 
-            let diffuse_term = light_dir.dot(&normal); // doubles to check if light is on correct side of object
-            let spec_term = (origin - &intr_point).norm().dot(&light_refl);
-            if diffuse_term > 0.0 {
-                color_buf.x +=
-                    intr_obj.get_diff().x * diffuse_term * light.diff.x * light_intensity
-                        + intr_obj.get_spec().x
-                            * spec_term.powf(intr_obj.get_shin())
-                            * light.spec.x
-                            * light_intensity;
-                color_buf.y +=
-                    intr_obj.get_diff().y * diffuse_term * light.diff.y * light_intensity
-                        + intr_obj.get_spec().y
-                            * spec_term.powf(intr_obj.get_shin())
-                            * light.spec.y
-                            * light_intensity;
-                color_buf.z +=
-                    intr_obj.get_diff().z * diffuse_term * light.diff.z * light_intensity
-                        + intr_obj.get_spec().z
-                            * spec_term.powf(intr_obj.get_shin())
-                            * light.spec.z
-                            * light_intensity;
-            }
+            // let diffuse_term = light_dir.dot(&normal); // doubles to check if light is on correct side of object
+            // let spec_term = (origin - &intr_point).norm().dot(&light_refl);
+            let sample_spectrum = bsdf.f(&w_o, &light_dir);
+            color_buf += light.diff.elwise_mul(&sample_spectrum) / 1.0; // I know I divide by 1 here but that's cuz point light and delta distribution and whatever man it's written in the book
         }
 
-        if depth > 0 && intr_obj.get_spec().dot(intr_obj.get_spec()) > 0.3 {
-            let in_ray = origin - &intr_point;
-            let refl_ray = (&(2.0 * (in_ray.dot(&normal)) * &normal) - &in_ray).norm();
-            color_buf = color_buf
-                + Self::incident_radiance(
-                    &refl_ray,
-                    &intr_point,
-                    _s,
-                    objects,
-                    lights,
-                    Some(intr_obj),
-                    depth - 1,
-                ) * 0.5;
+        let bs = bsdf.sample_f(&w_o, rand::random(), (rand::random(), rand::random()));
+        if let Some(bs) = bs
+            && depth > 0
+        {
+            let beta = bs.color * bs.w_i.dot(&normal).abs() / bs.pdf.into();
+            color_buf += Self::incident_radiance(
+                &bs.w_i,
+                &intr_point,
+                _s,
+                objects,
+                lights,
+                Some(intr_obj),
+                depth - 1,
+            )
+            .elwise_mul(&beta);
         }
 
         color_buf

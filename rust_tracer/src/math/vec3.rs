@@ -1,4 +1,4 @@
-use std::ops::{Add, Div, Mul, Sub};
+use std::ops::{Add, AddAssign, Div, Mul, Sub};
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct Vec3 {
@@ -59,6 +59,11 @@ impl Vec3 {
         let dz = v1.z - v2.z;
 
         dx * dx + dy * dy + dz * dz
+    }
+
+    /// multiply each element by corresponding element in the other Vec3
+    pub fn elwise_mul(&self, rhs: &Vec3) -> Vec3 {
+        Vec3::new(self.x * rhs.x, self.y * rhs.y, self.z * rhs.z)
     }
 }
 
@@ -163,5 +168,13 @@ impl Mul<&Vec3> for f64 {
 
     fn mul(self, rhs: &Vec3) -> Self::Output {
         Vec3::new(self * rhs.x, self * rhs.y, self * rhs.z)
+    }
+}
+
+impl AddAssign for Vec3 {
+    fn add_assign(&mut self, rhs: Self) {
+        self.x += rhs.x;
+        self.y += rhs.y;
+        self.z += rhs.z;
     }
 }
