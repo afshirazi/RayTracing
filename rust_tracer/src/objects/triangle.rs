@@ -1,5 +1,3 @@
-use std::f64::EPSILON;
-
 use crate::{bxdf::{Bsdf, Bxdfs, diffuse_bxdf::DiffuseBxdf}, math::Vec3};
 
 use super::RayOps;
@@ -35,7 +33,7 @@ impl RayOps for Triangle {
 
         let det = e1.dot(&ray_cross_e2); // (R x e2) . e1
 
-        if det < EPSILON && det > -EPSILON {
+        if det < f64::EPSILON && det > -f64::EPSILON {
             return None;
         }
 
@@ -55,7 +53,7 @@ impl RayOps for Triangle {
         }
 
         let t = inv_det * s_cross_e1.dot(&e2);
-        if t > EPSILON {
+        if t > f64::EPSILON {
             Some(origin + &(ray * t))
         } else {
             // t is negative, there is a line intersection but in the opposite direction of the ray.

@@ -13,8 +13,8 @@ impl Integrator for SimplePathIntegrator {
     fn shadow_rays<'a>(
         point: &Vec3,
         main_obj: &Object,
-        objects: &Vec<Object>,
-        lights: &'a Vec<Light>,
+        objects: &[Object],
+        lights: &'a [Light],
     ) -> Vec<&'a Light> {
         let mut vis_lights = vec![];
 
@@ -26,7 +26,7 @@ impl Integrator for SimplePathIntegrator {
                     continue;
                 }
 
-                if let Some(_) = object.get_intersect(&light_dir, point) {
+                if object.get_intersect(&light_dir, point).is_some() {
                     continue 'light_loop;
                 }
             }
@@ -41,8 +41,8 @@ impl Integrator for SimplePathIntegrator {
         ray: &Vec3,
         origin: &Vec3,
         _s: &impl Sampler, // unused for now
-        objects: &Vec<Object>,
-        lights: &Vec<Light>,
+        objects: &[Object],
+        lights: &[Light],
         src_obj: Option<&Object>,
         depth: u8,
     ) -> Vec3 {

@@ -26,7 +26,7 @@ impl Camera {
         }
     }
 
-    pub fn render(&self, objects: &Vec<Object>, lights: &Vec<Light>, img: &mut RgbImage) {
+    pub fn render(&self, objects: &[Object], lights: &[Light], img: &mut RgbImage) {
         let li = SimplePathIntegrator::incident_radiance;
         struct TempSampler;
         impl Sampler for TempSampler {}

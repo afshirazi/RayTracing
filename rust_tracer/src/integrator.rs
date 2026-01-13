@@ -9,8 +9,8 @@ pub trait Integrator {
     fn shadow_rays<'a>(
         point: &Vec3,
         main_obj: &Object,
-        objects: &Vec<Object>,
-        lights: &'a Vec<Light>,
+        objects: &[Object],
+        lights: &'a [Light],
     ) -> Vec<&'a Light>;
 
     /// mirrors Li() from PBRT
@@ -18,8 +18,8 @@ pub trait Integrator {
         ray: &Vec3,
         origin: &Vec3,
         /*sampled wavelengths, */ sampler: &impl Sampler,
-        objects: &Vec<Object>,
-        lights: &Vec<Light>,
+        objects: &[Object],
+        lights: &[Light],
         src_obj: Option<&Object>,
         depth: u8,
     ) -> Vec3;
