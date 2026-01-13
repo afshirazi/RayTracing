@@ -45,18 +45,18 @@ impl Bsdf {
 
 impl Bxdf for Bsdf {
     fn f(&self, w_o: &Vec3, w_i: &Vec3) -> Vec3 {
-        let local_w_o = self.frame.to_local(w_o);
-        let local_w_i = self.frame.to_local(w_i);
+        let local_w_o = self.frame.render_to_local(w_o);
+        let local_w_i = self.frame.render_to_local(w_i);
         self.bxdf.f(&local_w_o, &local_w_i)
     }
 
     fn sample_f(&self, w_o: &Vec3, uc: f32, u: (f32, f32)) -> Option<BsdfSample> {
-        let local_w_o = self.frame.to_local(w_o);
+        let local_w_o = self.frame.render_to_local(w_o);
         let mut bs = self.bxdf.sample_f(&local_w_o, uc, u)?;
         if bs.pdf == 0.0 || bs.w_i.z == 0.0 {
             return None;
         }
-        bs.w_i = self.frame.from_local(&bs.w_i);
+        bs.w_i = self.frame.local_to_render(&bs.w_i);
         Some(bs)
     }
 }
