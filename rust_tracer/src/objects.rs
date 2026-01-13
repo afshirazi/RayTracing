@@ -1,4 +1,4 @@
-use crate::{bxdf::{Bsdf, Bxdf}, math::Vec3};
+use crate::{bxdf::Bsdf, math::Vec3};
 
 pub mod circle;
 pub mod triangle;
@@ -22,13 +22,8 @@ pub trait RayOps {
     /// Expects a valid point on the surface.
     fn get_tangent(&self, point: &Vec3) -> Vec3;
 
+    /// Returns the material (BSDF for now)
     fn get_mat(&self, norm: &Vec3, dpdu: &Vec3) -> Bsdf;
-
-    fn get_diff(&self) -> &Vec3;
-
-    fn get_spec(&self) -> &Vec3;
-
-    fn get_shin(&self) -> f64;
 }
 
 pub enum Object {
@@ -48,27 +43,6 @@ impl RayOps for Object {
         match self {
             Object::Circle(c) => c.get_normal(point),
             Object::Triangle(tri) => tri.get_normal(point),
-        }
-    }
-
-    fn get_diff(&self) -> &Vec3 {
-        match self {
-            Object::Circle(c) => c.get_diff(),
-            Object::Triangle(tri) => tri.get_diff(),
-        }
-    }
-
-    fn get_spec(&self) -> &Vec3 {
-        match self {
-            Object::Circle(c) => c.get_spec(),
-            Object::Triangle(tri) => tri.get_spec(),
-        }
-    }
-
-    fn get_shin(&self) -> f64 {
-        match self {
-            Object::Circle(c) => c.get_shin(),
-            Object::Triangle(tri) => tri.get_shin(),
         }
     }
     

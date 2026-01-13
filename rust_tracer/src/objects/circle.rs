@@ -6,29 +6,15 @@ use crate::{bxdf::{Bsdf, Bxdfs, diffuse_bxdf::DiffuseBxdf}, math::Vec3};
 pub struct Circle {
     center: Vec3,
     radius: f64,
-    diff: Vec3,
-    spec: Vec3,
-    shin: f64,
+    color: Vec3,
 }
 
 impl Circle {
-    pub fn new(center: Vec3, radius: f64, diff: Vec3, spec: Vec3, shin: f64) -> Circle {
+    pub fn from_color(center: Vec3, radius: f64, color: Vec3) -> Circle {
         Circle {
             center,
             radius,
-            diff,
-            spec,
-            shin,
-        }
-    }
-
-    pub fn from_color(center: Vec3, radius: f64, color: &Vec3) -> Circle {
-        Circle {
-            center,
-            radius,
-            diff: color * 0.4,
-            spec: color * 0.7,
-            shin: 20.0,
+            color,
         }
     }
 }
@@ -62,18 +48,6 @@ impl RayOps for Circle {
     fn get_normal(&self, point: &Vec3) -> Vec3 {
         (point - &self.center).norm()
     }
-
-    fn get_diff(&self) -> &Vec3 {
-        &self.diff
-    }
-
-    fn get_spec(&self) -> &Vec3 {
-        &self.spec
-    }
-
-    fn get_shin(&self) -> f64 {
-        self.shin
-    }
     
     fn get_tangent(&self, point: &Vec3) -> Vec3 {
         let a = (point.x * point.x + self.center.x * self.center.x) / 2f64 * point.x * self.center.x;
@@ -86,7 +60,7 @@ impl RayOps for Circle {
     
     fn get_mat(&self, norm: &Vec3, dpdu: &Vec3) -> Bsdf {
         //TODO: figure out references
-        let bxdf = DiffuseBxdf::new(self.diff.clone());
+        let bxdf = DiffuseBxdf::new(self.color.clone());
         Bsdf::new(norm.clone(), dpdu.clone(), Bxdfs::Diffuse(bxdf))
     }
     
@@ -106,12 +80,10 @@ mod test {
 
     #[test]
     fn test_intersect_success() {
-        let c = Circle::new(
+        let c = Circle::from_color(
             Vec3::new(0.0, 0.0, -4.0),
             2.0,
             Vec3::new(0.4, 0.2, 0.76),
-            Vec3::empty_vec(),
-            10.0,
         );
 
         let ray = Vec3::new(0.0, 0.0, -1.0);
@@ -125,12 +97,10 @@ mod test {
 
     #[test]
     fn test_intersect_fail() {
-        let c = Circle::new(
+        let c = Circle::from_color(
             Vec3::new(0.0, 0.0, -4.0),
             2.0,
             Vec3::new(0.4, 0.2, 0.76),
-            Vec3::empty_vec(),
-            10.0,
         );
 
         let ray = Vec3::new(20.0, 30.0, -1.0).norm();

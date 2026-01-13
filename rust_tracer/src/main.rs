@@ -16,17 +16,15 @@ fn main() {
     let mut img = RgbImage::new(1600, 900);
 
     let objects = vec![
-        Object::Circle(Circle::new(
+        Object::Circle(Circle::from_color(
             Vec3::new(2.0, -4.0, -10.0),
             2.0,
             Vec3::new(0.4, 0.2, 0.76),
-            Vec3::new(0.4, 0.2, 0.76),
-            10.0,
         )),
         Object::Circle(Circle::from_color(
             Vec3::new(-2.0, 105.0, -10.0),
             100.0,
-            &Vec3::new(0.17, 0.6, 0.23),
+            Vec3::new(0.17, 0.6, 0.23),
         )),
         Object::Triangle(Triangle::from_color(
             Vec3::new(-4.5, -3.0, -9.0),
@@ -40,11 +38,9 @@ fn main() {
         Light::new(
             Vec3::new(2.3, -12.0, -3.0),
             Vec3::new(1.0, 1.0, 1.0),
-            Vec3::new(1.0, 1.0, 1.0),
         ),
         Light::new(
             Vec3::new(-1.3, 22.0, 10.0),
-            Vec3::new(1.0, 1.0, 1.0),
             Vec3::new(1.0, 1.0, 1.0),
         ),
     ];
@@ -59,5 +55,5 @@ fn main() {
 
     camera.render(&objects, &lights, &mut img);
 
-    img.save("try_after_refactor.png").unwrap();
+    img.save("after_bxdf.png").unwrap();
 }

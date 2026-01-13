@@ -25,7 +25,7 @@ impl Bxdf for DiffuseBxdf {
     }
 
     /// for now, guaranteed to return a Some(BsdfSample)
-    fn sample_f(&self, w_o: &Vec3, uc: f32, u: (f32, f32)) -> Option<BsdfSample> {
+    fn sample_f(&self, w_o: &Vec3, _: f32, u: (f32, f32)) -> Option<BsdfSample> {
         let mut w_i = math::sample_cosine_hemisphere(u);
         if w_o.z < 0.0 {
             w_i.z *= -1.0;

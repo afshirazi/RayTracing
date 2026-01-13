@@ -9,30 +9,15 @@ pub struct Triangle {
     b: Vec3,
     c: Vec3,
     diff: Vec3,
-    spec: Vec3,
-    shin: f64,
 }
 
 impl Triangle {
-    pub fn new(a: Vec3, b: Vec3, c: Vec3, diff: Vec3, spec: Vec3, shin: f64) -> Triangle {
-        Triangle {
-            a,
-            b,
-            c,
-            diff,
-            spec,
-            shin,
-        }
-    }
-
     pub fn from_color(a: Vec3, b: Vec3, c: Vec3, color: &Vec3) -> Triangle {
         Triangle {
             a,
             b,
             c,
             diff: color * 0.4,
-            spec: color * 0.7,
-            shin: 20.0,
         }
     }
 }
@@ -83,18 +68,6 @@ impl RayOps for Triangle {
         let ac = &self.c - &self.a;
 
         ab.cross(&ac).norm()
-    }
-
-    fn get_diff(&self) -> &Vec3 {
-        &self.diff
-    }
-
-    fn get_spec(&self) -> &Vec3 {
-        &self.spec
-    }
-
-    fn get_shin(&self) -> f64 {
-        self.shin
     }
     
     fn get_tangent(&self, _: &Vec3) -> Vec3 {

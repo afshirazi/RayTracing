@@ -9,12 +9,6 @@ use crate::{
 
 pub struct SimplePathIntegrator;
 
-impl SimplePathIntegrator {
-    pub fn new() -> Self {
-        SimplePathIntegrator
-    }
-}
-
 impl Integrator for SimplePathIntegrator {
     fn shadow_rays<'a>(
         point: &Vec3,
@@ -87,14 +81,9 @@ impl Integrator for SimplePathIntegrator {
 
         for light in vis_lights {
             let light_dir = (&light.pos - &intr_point).norm();
-            let light_refl = (&(2.0 * (light_dir.dot(&normal)) * &normal) - &light_dir).norm();
 
-            let light_intensity = 250.0 * Vec3::euclid_dist_sq(&light.pos, &intr_point).recip(); // TODO remove hardcode
-
-            // let diffuse_term = light_dir.dot(&normal); // doubles to check if light is on correct side of object
-            // let spec_term = (origin - &intr_point).norm().dot(&light_refl);
             let sample_spectrum = bsdf.f(&w_o, &light_dir);
-            color_buf += light.diff.elwise_mul(&sample_spectrum) / 1.0; // I know I divide by 1 here but that's cuz point light and delta distribution and whatever man it's written in the book
+            color_buf += light.color.elwise_mul(&sample_spectrum) / 1.0; // I know I divide by 1 here but that's cuz point light and delta distribution and whatever man it's written in the book
         }
 
         let bs = bsdf.sample_f(&w_o, rand::random(), (rand::random(), rand::random()));
