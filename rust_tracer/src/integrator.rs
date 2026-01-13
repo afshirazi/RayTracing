@@ -1,4 +1,4 @@
-use crate::light::Light;
+use crate::light::PointLight;
 use crate::math::Vec3;
 use crate::objects::Object;
 use crate::sampler::Sampler;
@@ -10,8 +10,8 @@ pub trait Integrator {
         point: &Vec3,
         main_obj: &Object,
         objects: &[Object],
-        lights: &'a [Light],
-    ) -> Vec<&'a Light>;
+        lights: &'a [PointLight],
+    ) -> Vec<&'a PointLight>;
 
     /// mirrors Li() from PBRT
     fn incident_radiance(
@@ -19,7 +19,7 @@ pub trait Integrator {
         origin: &Vec3,
         /*sampled wavelengths, */ sampler: &impl Sampler,
         objects: &[Object],
-        lights: &[Light],
+        lights: &[PointLight],
         src_obj: Option<&Object>,
         depth: u8,
     ) -> Vec3;

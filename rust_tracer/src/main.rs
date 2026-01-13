@@ -1,6 +1,6 @@
 use camera::Camera;
 use image::RgbImage;
-use light::Light;
+use light::PointLight;
 use math::Vec3;
 use objects::{Circle, Object, Triangle};
 
@@ -35,11 +35,11 @@ fn main() {
     ];
 
     let lights = vec![
-        Light::new(
+        PointLight::new(
             Vec3::new(2.3, -12.0, -3.0),
             Vec3::new(1.0, 1.0, 1.0),
         ),
-        Light::new(
+        PointLight::new(
             Vec3::new(-1.3, 22.0, 10.0),
             Vec3::new(1.0, 1.0, 1.0),
         ),

@@ -1,7 +1,7 @@
 use crate::{
     bxdf::Bxdf,
     integrator::Integrator,
-    light::Light,
+    light::PointLight,
     math::Vec3,
     objects::{Object, RayOps},
     sampler::Sampler,
@@ -14,8 +14,8 @@ impl Integrator for SimplePathIntegrator {
         point: &Vec3,
         main_obj: &Object,
         objects: &[Object],
-        lights: &'a [Light],
-    ) -> Vec<&'a Light> {
+        lights: &'a [PointLight],
+    ) -> Vec<&'a PointLight> {
         let mut vis_lights = vec![];
 
         'light_loop: for light in lights {
@@ -42,7 +42,7 @@ impl Integrator for SimplePathIntegrator {
         origin: &Vec3,
         _s: &impl Sampler, // unused for now
         objects: &[Object],
-        lights: &[Light],
+        lights: &[PointLight],
         src_obj: Option<&Object>,
         depth: u8,
     ) -> Vec3 {

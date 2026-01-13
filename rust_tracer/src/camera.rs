@@ -2,7 +2,7 @@ use image::{Rgb, RgbImage};
 use rand::random;
 
 use crate::{
-    integrator::{Integrator, simple_path_integrator::SimplePathIntegrator}, light::Light, math::Vec3, objects::Object, sampler::Sampler
+    integrator::{Integrator, simple_path_integrator::SimplePathIntegrator}, light::PointLight, math::Vec3, objects::Object, sampler::Sampler
 };
 
 pub struct Camera {
@@ -26,7 +26,7 @@ impl Camera {
         }
     }
 
-    pub fn render(&self, objects: &[Object], lights: &[Light], img: &mut RgbImage) {
+    pub fn render(&self, objects: &[Object], lights: &[PointLight], img: &mut RgbImage) {
         let li = SimplePathIntegrator::incident_radiance;
         struct TempSampler;
         impl Sampler for TempSampler {}
