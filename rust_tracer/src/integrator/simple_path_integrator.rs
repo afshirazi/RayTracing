@@ -40,7 +40,7 @@ impl Integrator for SimplePathIntegrator {
     fn incident_radiance(
         ray: &Vec3,
         origin: &Vec3,
-        _s: &impl Sampler, // unused for now
+        sampler: &impl Sampler,
         objects: &[Object],
         lights: &[PointLight],
         src_obj: Option<&Object>,
@@ -86,7 +86,7 @@ impl Integrator for SimplePathIntegrator {
             color_buf += light.color.elwise_mul(&sample_spectrum) / 1.0; // I know I divide by 1 here but that's cuz point light and delta distribution and whatever man it's written in the book
         }
 
-        let bs = bsdf.sample_f(&w_o, rand::random(), (rand::random(), rand::random()));
+        let bs = bsdf.sample_f(&w_o, sampler.get_1d(), sampler.get_2d());
         if let Some(bs) = bs
             && depth > 0
         {
@@ -94,7 +94,7 @@ impl Integrator for SimplePathIntegrator {
             color_buf += Self::incident_radiance(
                 &bs.w_i,
                 &intr_point,
-                _s,
+                sampler,
                 objects,
                 lights,
                 Some(intr_obj),
