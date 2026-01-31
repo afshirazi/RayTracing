@@ -2,7 +2,7 @@ use image::{Rgb, RgbImage};
 use rand::random;
 
 use crate::{
-    integrator::{Integrator, simple_path_integrator::SimplePathIntegrator}, light::PointLight, math::Vec3, objects::Object, sampler::{IndependentSampler, Sampler}
+    integrator::{Integrator, simple_path_integrator::SimplePathIntegrator}, light::PointLight, math::Vec3, objects::Object, sampler::IndependentSampler
 };
 
 pub struct Camera {
