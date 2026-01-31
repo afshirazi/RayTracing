@@ -2,7 +2,7 @@ use image::{Rgb, RgbImage};
 use rand::random;
 
 use crate::{
-    integrator::{Integrator, simple_path_integrator::SimplePathIntegrator}, light::PointLight, math::Vec3, objects::Object, sampler::Sampler
+    integrator::{Integrator, simple_path_integrator::SimplePathIntegrator}, light::PointLight, math::Vec3, objects::Object, sampler::{IndependentSampler, Sampler}
 };
 
 pub struct Camera {
@@ -28,16 +28,14 @@ impl Camera {
 
     pub fn render(&self, objects: &[Object], lights: &[PointLight], img: &mut RgbImage) {
         let li = SimplePathIntegrator::incident_radiance;
-        struct TempSampler;
-        impl Sampler for TempSampler {}
-        let temp_sampler = TempSampler;
-        // ^^^^^^ This is all temporary garbage TODO: remove
+        let sampler = IndependentSampler; 
+        // TODO: ^^^refactor out of here
 
         for (x, y, pixel) in img.enumerate_pixels_mut() {
             let mut px_color = Vec3::empty_vec();
             for _ in 0..self.samples_per_px {
                 let ray = self.get_randomized_ray(x, y, 1600, 900);
-                px_color +=  li(&ray, &self.eye, &temp_sampler, objects, lights, None, 5);
+                px_color +=  li(&ray, &self.eye, &sampler, objects, lights, None, 5);
             }
             px_color = px_color * self.sample_scale;
 
