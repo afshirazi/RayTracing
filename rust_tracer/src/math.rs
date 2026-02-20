@@ -32,3 +32,13 @@ pub fn sample_cosine_hemisphere(u: (f32, f32)) -> Vec3 {
 pub fn cosine_hemisphere_pdf(cos_theta: f32) -> f32 {
     cos_theta * f32::consts::FRAC_1_PI
 }
+
+pub trait NumExtensions {
+    fn safe_sqrt(self) -> f64;
+}
+
+impl NumExtensions for f64 {
+    fn safe_sqrt(self) -> f64 {
+        self.sqrt().max(0.0)
+    }
+}

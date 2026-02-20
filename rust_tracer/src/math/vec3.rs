@@ -1,4 +1,5 @@
 use std::ops::{Add, AddAssign, Div, Mul, Neg, Sub};
+use super::NumExtensions;
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct Vec3 {
@@ -70,13 +71,40 @@ impl Vec3 {
 pub mod reflect {
     use super::*;
 
+    /// Reflects `w_i`` around `n`. Expects `n` to be normalized.
     pub fn reflect(w_i: &Vec3, n: &Vec3) -> Vec3 {
         -w_i + 2.0 * w_i.dot(n) * n
     }
+
+    /// Transmits `w_i` into the material. Expects `n` to be normalized.
+    pub fn refract(w_i: &Vec3, n: &Vec3, eta: f32) -> Option<Vec3> {
+        let mut eta= eta as f64;
+        let dummy; // TODO: check if you want to make Vec3 implement Copy instead.
+        let mut n = n;
+        let mut cos_theta_i = w_i.dot(&n);
+        
+        if cos_theta_i < 0.0 {
+            eta = eta.recip();
+            cos_theta_i = -cos_theta_i;
+            dummy = -n;
+            n = &dummy;
+        }
+
+        let sin2_theta_i = f64::max(1.0 - cos_theta_i * cos_theta_i, 0.0);
+        let sin2_theta_t = sin2_theta_i / (eta * eta);
+        if sin2_theta_t > 1.0 {
+            return None
+        }
+        let cos_theta_t = (1.0 - sin2_theta_t).safe_sqrt();
+
+        let w_t = -w_i / eta + (cos_theta_i / eta - cos_theta_t) * n;
+
+        Some(w_t)
+    }
 }
 
-/////////////// OPERATOR OVERLOADING /////////////////////
 
+/////////////// OPERATOR OVERLOADING /////////////////////
 
 impl Mul<f64> for Vec3 {
     type Output = Vec3;
