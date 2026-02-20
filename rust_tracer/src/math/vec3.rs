@@ -67,6 +67,10 @@ impl Vec3 {
     }
 }
 
+
+/////////////// OPERATOR OVERLOADING /////////////////////
+
+
 impl Mul<f64> for Vec3 {
     type Output = Vec3;
 

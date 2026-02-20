@@ -40,6 +40,7 @@ impl Camera {
             px_color = px_color * self.sample_scale;
 
             // sqrt() for gamma correction (maybe) (idk how it works)
+            // TODO: look into gamma correction
             let r = px_color.x.sqrt().clamp(0.0, 1.0) * 255.0;
             let g = px_color.y.sqrt().clamp(0.0, 1.0) * 255.0;
             let b = px_color.z.sqrt().clamp(0.0, 1.0) * 255.0;
