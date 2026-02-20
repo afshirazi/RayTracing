@@ -1,4 +1,4 @@
-use std::ops::{Add, AddAssign, Div, Mul, Sub};
+use std::ops::{Add, AddAssign, Div, Mul, Neg, Sub};
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct Vec3 {
@@ -67,6 +67,13 @@ impl Vec3 {
     }
 }
 
+pub mod reflect {
+    use super::*;
+
+    pub fn reflect(w_i: &Vec3, n: &Vec3) -> Vec3 {
+        -w_i + 2.0 * w_i.dot(n) * n
+    }
+}
 
 /////////////// OPERATOR OVERLOADING /////////////////////
 
@@ -163,6 +170,30 @@ impl Sub for &Vec3 {
             x: self.x - rhs.x,
             y: self.y - rhs.y,
             z: self.z - rhs.z,
+        }
+    }
+}
+
+impl Neg for Vec3 {
+    type Output = Vec3;
+
+    fn neg(self) -> Self::Output {
+        Vec3 {
+            x: -self.x,
+            y: -self.y,
+            z: -self.z,
+        }
+    }
+}
+
+impl Neg for &Vec3 {
+    type Output = Vec3;
+
+    fn neg(self) -> Self::Output {
+        Vec3 {
+            x: -self.x,
+            y: -self.y,
+            z: -self.z,
         }
     }
 }
