@@ -33,12 +33,33 @@ pub fn cosine_hemisphere_pdf(cos_theta: f32) -> f32 {
     cos_theta * f32::consts::FRAC_1_PI
 }
 
+
+/////////////// CONVENIENCE EXTENSIONS /////////////////////
+
 pub trait NumExtensions {
-    fn safe_sqrt(self) -> f64;
+    type Output;
+    fn safe_sqrt(self) -> Self::Output;
+    fn sqr(self) -> Self::Output;
 }
 
 impl NumExtensions for f64 {
-    fn safe_sqrt(self) -> f64 {
+    type Output = f64;
+    fn safe_sqrt(self) -> Self::Output {
         self.sqrt().max(0.0)
+    }
+    
+    fn sqr(self) -> Self::Output {
+        self * self
+    }
+}
+
+impl NumExtensions for f32 {
+    type Output = f32;
+    fn safe_sqrt(self) -> Self::Output {
+        self.sqrt().max(0.0)
+    }
+    
+    fn sqr(self) -> Self::Output {
+        self * self
     }
 }
