@@ -4,6 +4,7 @@ mod vec3;
 use std::f32;
 
 pub use frame::Frame;
+use num::complex::Complex32;
 pub use vec3::Vec3;
 
 pub fn sample_uniform_disk_concentric(u: (f32, f32)) -> (f32, f32) {
@@ -59,6 +60,18 @@ impl NumExtensions for f32 {
         self.sqrt().max(0.0)
     }
     
+    fn sqr(self) -> Self::Output {
+        self * self
+    }
+}
+
+impl NumExtensions for Complex32 {
+    type Output = Complex32;
+
+    fn safe_sqrt(self) -> Self::Output {
+        unimplemented!()
+    }
+
     fn sqr(self) -> Self::Output {
         self * self
     }
