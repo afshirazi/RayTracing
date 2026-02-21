@@ -1,4 +1,5 @@
 use std::ops::{Add, AddAssign, Div, Mul, Neg, Sub};
+use num::complex::Complex32;
 use super::NumExtensions;
 
 #[derive(Debug, PartialEq, Clone)]
@@ -121,7 +122,20 @@ pub mod reflect {
         let r_parl = (eta * cos_theta_i - cos_theta_t) / (eta * cos_theta_i + cos_theta_t);
         let r_perp = (cos_theta_i - eta * cos_theta_t) / (cos_theta_i + eta * cos_theta_t);
 
-        0.5 * (r_parl.sqr() + r_perp.sqr())
+        (r_parl.sqr() + r_perp.sqr()) / 2.0
+    }
+
+    pub fn fresnel_complex(cos_theta_i: f32, eta: Complex32) -> f32 {
+        let mut cos_theta_i = cos_theta_i.clamp(0.0, 1.0);
+
+        let sin2_theta_i = 1.0 - cos_theta_i.sqr();
+        let sin2_theta_t = sin2_theta_i / eta.sqr();
+        let cos_theta_t = (1.0 - sin2_theta_t).sqrt();
+
+        let r_parl = (eta * cos_theta_i - cos_theta_t) / (eta * cos_theta_i + cos_theta_t);
+        let r_perp = (cos_theta_i - eta * cos_theta_t) / (cos_theta_i + eta * cos_theta_t);
+
+        (r_parl.norm_sqr() + r_perp.norm_sqr()) / 2.0
     }
 }
 
