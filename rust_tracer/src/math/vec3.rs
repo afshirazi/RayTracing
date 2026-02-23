@@ -82,7 +82,7 @@ pub mod reflect {
         let mut eta= eta as f64;
         let dummy; // TODO: check if you want to make Vec3 implement Copy instead.
         let mut n = n;
-        let mut cos_theta_i = w_i.dot(&n);
+        let mut cos_theta_i = w_i.dot(n);
         
         if cos_theta_i < 0.0 {
             eta = eta.recip();
