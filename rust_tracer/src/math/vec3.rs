@@ -126,7 +126,7 @@ pub mod reflect {
     }
 
     pub fn fresnel_complex(cos_theta_i: f32, eta: Complex32) -> f32 {
-        let mut cos_theta_i = cos_theta_i.clamp(0.0, 1.0);
+        let cos_theta_i = cos_theta_i.clamp(0.0, 1.0);
 
         let sin2_theta_i = 1.0 - cos_theta_i.sqr();
         let sin2_theta_t = sin2_theta_i / eta.sqr();
