@@ -138,7 +138,7 @@ pub mod reflect {
         (r_parl.norm_sqr() + r_perp.norm_sqr()) / 2.0
     }
 
-    pub fn fresnel_complex_spec(cos_theta_i: f32, eta: Vec3, k: Vec3) -> Vec3 {
+    pub fn fresnel_complex_spec(cos_theta_i: f32, eta: &Vec3, k: &Vec3) -> Vec3 {
         let mut res = Vec3::empty_vec();
         // TODO: clean up (f64 -> f32, Vec3 -> SampledSpectrum, build the result more dynamically)
         res.x = fresnel_complex(cos_theta_i, Complex32::new(eta.x as f32, k.x as f32)) as f64;
