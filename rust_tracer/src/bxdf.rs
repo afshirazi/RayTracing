@@ -4,6 +4,8 @@ use crate::{
 };
 
 pub mod diffuse_bxdf;
+pub mod conductor_bxdf;
+pub mod trowbridge_reitz_distribution;
 
 pub enum Bxdfs {
     Diffuse(DiffuseBxdf),
