@@ -1,13 +1,13 @@
 use crate::{bxdf::{BsdfSample, Bxdf, trowbridge_reitz_distribution::TrowbridgeReitzDistribution}, math::{Vec3, reflect::fresnel_complex_spec}};
 
-struct ConductorBxdf {
+pub struct ConductorBxdf {
     microfacet_distrib: TrowbridgeReitzDistribution,
     eta: Vec3,
     k: Vec3,
 }
 
 impl ConductorBxdf {
-    fn new(microfacet_distrib: TrowbridgeReitzDistribution, eta: Vec3, k: Vec3) -> Self {
+    pub fn new(microfacet_distrib: TrowbridgeReitzDistribution, eta: Vec3, k: Vec3) -> Self {
         Self { microfacet_distrib, eta, k }
     }
 
