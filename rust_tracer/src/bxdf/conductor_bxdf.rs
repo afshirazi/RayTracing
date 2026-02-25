@@ -27,7 +27,7 @@ impl Bxdf for ConductorBxdf {
     fn sample_f(&self, w_o: &Vec3, _uc: f32, _u: (f32, f32)) -> Option<BsdfSample> {
         if self.effectively_smooth() {
             let w_i = Vec3::new(-w_o.x, -w_o.y, w_o.z);
-            let f = fresnel_complex_spec(w_i.z as f32, &self.eta, &self.k);
+            let f = fresnel_complex_spec(w_i.z.abs() as f32, &self.eta, &self.k);
 
             return Some(BsdfSample::new(f, w_i, 1.0))
         }
