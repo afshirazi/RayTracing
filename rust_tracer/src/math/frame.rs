@@ -6,7 +6,7 @@ pub struct Frame {
     x: Vec3,
     y: Vec3,
     z: Vec3,
-} 
+}
 
 impl Frame {
     pub fn new(x: Vec3, y: Vec3, z: Vec3) -> Self {

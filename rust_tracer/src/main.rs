@@ -4,13 +4,13 @@ use light::PointLight;
 use math::Vec3;
 use objects::{Circle, Object, Triangle};
 
+mod bxdf;
 mod camera;
+mod integrator;
 mod light;
 mod math;
 mod objects;
-mod integrator;
 mod sampler;
-mod bxdf;
 
 fn main() {
     let mut img = RgbImage::new(1600, 900);
@@ -35,14 +35,8 @@ fn main() {
     ];
 
     let lights = vec![
-        PointLight::new(
-            Vec3::new(2.3, -12.0, -3.0),
-            Vec3::new(1.0, 1.0, 1.0),
-        ),
-        PointLight::new(
-            Vec3::new(-1.3, 22.0, 10.0),
-            Vec3::new(1.0, 1.0, 1.0),
-        ),
+        PointLight::new(Vec3::new(2.3, -12.0, -3.0), Vec3::new(1.0, 1.0, 1.0)),
+        PointLight::new(Vec3::new(-1.3, 22.0, 10.0), Vec3::new(1.0, 1.0, 1.0)),
     ];
 
     let camera = Camera::new(
@@ -55,5 +49,5 @@ fn main() {
 
     camera.render(&objects, &lights, &mut img);
 
-    img.save("after_bxdf.png").unwrap();
+    img.save("after_conductor.png").unwrap();
 }

@@ -1,4 +1,7 @@
-use crate::{bxdf::{Bsdf, Bxdfs, diffuse_bxdf::DiffuseBxdf}, math::Vec3};
+use crate::{
+    bxdf::{Bsdf, Bxdfs, diffuse_bxdf::DiffuseBxdf},
+    math::Vec3,
+};
 
 use super::RayOps;
 
@@ -67,11 +70,11 @@ impl RayOps for Triangle {
 
         ab.cross(&ac).norm()
     }
-    
+
     fn get_tangent(&self, _: &Vec3) -> Vec3 {
         ((&self.c - &self.a) + (&self.c - &self.b)).norm()
     }
-    
+
     fn get_mat(&self, norm: &Vec3, dpdu: &Vec3) -> Bsdf {
         let bxdf = DiffuseBxdf::new(self.diff.clone());
         Bsdf::new(norm.clone(), dpdu.clone(), Bxdfs::Diffuse(bxdf))

@@ -1,4 +1,7 @@
-use crate::{bxdf::{BsdfSample, Bxdf, trowbridge_reitz_distribution::TrowbridgeReitzDistribution}, math::{Vec3, reflect::fresnel_complex_spec}};
+use crate::{
+    bxdf::{BsdfSample, Bxdf, trowbridge_reitz_distribution::TrowbridgeReitzDistribution},
+    math::{Vec3, reflect::fresnel_complex_spec},
+};
 
 pub struct ConductorBxdf {
     microfacet_distrib: TrowbridgeReitzDistribution,
@@ -8,7 +11,11 @@ pub struct ConductorBxdf {
 
 impl ConductorBxdf {
     pub fn new(microfacet_distrib: TrowbridgeReitzDistribution, eta: Vec3, k: Vec3) -> Self {
-        Self { microfacet_distrib, eta, k }
+        Self {
+            microfacet_distrib,
+            eta,
+            k,
+        }
     }
 
     fn effectively_smooth(&self) -> bool {
@@ -19,7 +26,7 @@ impl ConductorBxdf {
 impl Bxdf for ConductorBxdf {
     fn f(&self, _w_o: &Vec3, _w_i: &Vec3) -> Vec3 {
         if self.effectively_smooth() {
-            return Vec3::empty_vec()
+            return Vec3::empty_vec();
         }
         unimplemented!("WIP, dependent on microfacet distribution work")
     }
@@ -29,7 +36,7 @@ impl Bxdf for ConductorBxdf {
             let w_i = Vec3::new(-w_o.x, -w_o.y, w_o.z);
             let f = fresnel_complex_spec(w_i.z.abs() as f32, &self.eta, &self.k);
 
-            return Some(BsdfSample::new(f, w_i, 1.0))
+            return Some(BsdfSample::new(f, w_i, 1.0));
         }
         unimplemented!("WIP, dependent on microfacet distribution work")
     }

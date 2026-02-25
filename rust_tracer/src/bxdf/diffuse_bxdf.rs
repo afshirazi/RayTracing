@@ -31,6 +31,10 @@ impl Bxdf for DiffuseBxdf {
             w_i.z *= -1.0;
         }
         let pdf = math::cosine_hemisphere_pdf(w_i.z.abs() as f32);
-        Some(BsdfSample::new(&self.color * f64::consts::FRAC_1_PI, w_i, pdf))
+        Some(BsdfSample::new(
+            &self.color * f64::consts::FRAC_1_PI,
+            w_i,
+            pdf,
+        ))
     }
 }

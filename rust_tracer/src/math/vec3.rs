@@ -1,6 +1,6 @@
-use std::ops::{Add, AddAssign, Div, Mul, Neg, Sub};
-use num::complex::Complex32;
 use super::NumExtensions;
+use num::complex::Complex32;
+use std::ops::{Add, AddAssign, Div, Mul, Neg, Sub};
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct Vec3 {
@@ -79,11 +79,11 @@ pub mod reflect {
 
     /// Transmits `w_i` into the material. Expects `n` to be normalized.
     pub fn refract(w_i: &Vec3, n: &Vec3, eta: f32) -> Option<Vec3> {
-        let mut eta= eta as f64;
+        let mut eta = eta as f64;
         let dummy; // TODO: check if you want to make Vec3 implement Copy instead.
         let mut n = n;
         let mut cos_theta_i = w_i.dot(n);
-        
+
         if cos_theta_i < 0.0 {
             eta = eta.recip();
             cos_theta_i = -cos_theta_i;
@@ -94,7 +94,7 @@ pub mod reflect {
         let sin2_theta_i = f64::max(1.0 - cos_theta_i * cos_theta_i, 0.0);
         let sin2_theta_t = sin2_theta_i / eta.sqr();
         if sin2_theta_t > 1.0 {
-            return None
+            return None;
         }
         let cos_theta_t = (1.0 - sin2_theta_t).safe_sqrt();
 
@@ -106,7 +106,7 @@ pub mod reflect {
     pub fn fresnel_dielectric(cos_theta_i: f32, eta: f32) -> f32 {
         let mut cos_theta_i = cos_theta_i.clamp(-1.0, 1.0);
         let mut eta = eta;
-        
+
         if cos_theta_i < 0.0 {
             cos_theta_i = -cos_theta_i;
             eta = eta.recip();
@@ -115,7 +115,7 @@ pub mod reflect {
         let sin2_theta_i = f32::max(1.0 - cos_theta_i * cos_theta_i, 0.0);
         let sin2_theta_t = sin2_theta_i / eta.sqr();
         if sin2_theta_t > 1.0 {
-            return 1.0
+            return 1.0;
         }
         let cos_theta_t = (1.0 - sin2_theta_t).safe_sqrt();
 
@@ -148,7 +148,6 @@ pub mod reflect {
         res
     }
 }
-
 
 /////////////// OPERATOR OVERLOADING /////////////////////
 
