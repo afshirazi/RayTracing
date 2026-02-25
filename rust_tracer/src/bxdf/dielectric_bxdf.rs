@@ -6,6 +6,7 @@ use crate::{
     },
 };
 
+#[derive(Clone)]
 pub struct DielectricBxdf {
     microfacet_distrib: TrowbridgeReitzDistribution,
     eta: f32,

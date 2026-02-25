@@ -3,6 +3,7 @@ use crate::{
     math::{Vec3, reflect::fresnel_complex_spec},
 };
 
+#[derive(Clone)]
 pub struct ConductorBxdf {
     microfacet_distrib: TrowbridgeReitzDistribution,
     eta: Vec3,

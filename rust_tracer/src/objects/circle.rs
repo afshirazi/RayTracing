@@ -2,22 +2,22 @@ use core::f64;
 
 use super::RayOps;
 use crate::{
-    bxdf::{Bsdf, Bxdfs, diffuse_bxdf::DiffuseBxdf},
+    bxdf::{Bsdf, Bxdfs},
     math::Vec3,
 };
 
 pub struct Circle {
     center: Vec3,
     radius: f64,
-    color: Vec3,
+    bxdf: Bxdfs,
 }
 
 impl Circle {
-    pub fn from_color(center: Vec3, radius: f64, color: Vec3) -> Circle {
+    pub fn from_color(center: Vec3, radius: f64, bxdf: Bxdfs) -> Circle {
         Circle {
             center,
             radius,
-            color,
+            bxdf,
         }
     }
 }
@@ -64,9 +64,8 @@ impl RayOps for Circle {
     }
 
     fn get_mat(&self, norm: &Vec3, dpdu: &Vec3) -> Bsdf {
-        //TODO: figure out references, don't hardcode Diffuse lol
-        let bxdf = DiffuseBxdf::new(self.color.clone());
-        Bsdf::new(norm.clone(), dpdu.clone(), Bxdfs::Diffuse(bxdf))
+        //TODO: figure out references
+        Bsdf::new(norm.clone(), dpdu.clone(), self.bxdf.clone())
     }
 }
 
@@ -79,11 +78,20 @@ impl PartialEq for Circle {
 
 #[cfg(test)]
 mod test {
+    use crate::bxdf::{
+        conductor_bxdf::ConductorBxdf, trowbridge_reitz_distribution::TrowbridgeReitzDistribution,
+    };
+
     use super::*;
 
     #[test]
     fn test_intersect_success() {
-        let c = Circle::from_color(Vec3::new(0.0, 0.0, -4.0), 2.0, Vec3::new(0.4, 0.2, 0.76));
+        let bxdf = ConductorBxdf::new(
+            TrowbridgeReitzDistribution::zero(),
+            Vec3::empty_vec(),
+            Vec3::empty_vec(),
+        );
+        let c = Circle::from_color(Vec3::new(0.0, 0.0, -4.0), 2.0, Bxdfs::Conductor(bxdf));
 
         let ray = Vec3::new(0.0, 0.0, -1.0);
         let origin = Vec3::empty_vec();
@@ -96,7 +104,12 @@ mod test {
 
     #[test]
     fn test_intersect_fail() {
-        let c = Circle::from_color(Vec3::new(0.0, 0.0, -4.0), 2.0, Vec3::new(0.4, 0.2, 0.76));
+        let bxdf = ConductorBxdf::new(
+            TrowbridgeReitzDistribution::zero(),
+            Vec3::empty_vec(),
+            Vec3::empty_vec(),
+        );
+        let c = Circle::from_color(Vec3::new(0.0, 0.0, -4.0), 2.0, Bxdfs::Conductor(bxdf));
 
         let ray = Vec3::new(20.0, 30.0, -1.0).norm();
         let origin = Vec3::empty_vec();

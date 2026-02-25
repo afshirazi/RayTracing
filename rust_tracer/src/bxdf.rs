@@ -8,6 +8,7 @@ pub mod dielectric_bxdf;
 pub mod diffuse_bxdf;
 pub mod trowbridge_reitz_distribution;
 
+#[derive(Clone)]
 pub enum Bxdfs {
     Diffuse(DiffuseBxdf),
     Conductor(ConductorBxdf),

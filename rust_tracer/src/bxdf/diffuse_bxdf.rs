@@ -5,6 +5,7 @@ use crate::{
     math::{self, Vec3},
 };
 
+#[derive(Clone)]
 pub struct DiffuseBxdf {
     color: Vec3,
 }

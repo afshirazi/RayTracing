@@ -4,6 +4,8 @@ use light::PointLight;
 use math::Vec3;
 use objects::{Circle, Object, Triangle};
 
+use crate::bxdf::{Bxdfs, conductor_bxdf::ConductorBxdf, dielectric_bxdf::DielectricBxdf, trowbridge_reitz_distribution::TrowbridgeReitzDistribution};
+
 mod bxdf;
 mod camera;
 mod integrator;
@@ -15,16 +17,18 @@ mod sampler;
 fn main() {
     let mut img = RgbImage::new(1600, 900);
 
+    let dielectric = DielectricBxdf::new(TrowbridgeReitzDistribution::zero(), 0.4);
+    let conductor = ConductorBxdf::new(TrowbridgeReitzDistribution::zero(), Vec3::new(0.5, 0.4, 0.3), Vec3::new(0.3, 0.2, 0.1));
     let objects = vec![
         Object::Circle(Circle::from_color(
             Vec3::new(2.0, -4.0, -10.0),
             2.0,
-            Vec3::new(0.4, 0.2, 0.76),
+            Bxdfs::Dielectric(dielectric),
         )),
         Object::Circle(Circle::from_color(
             Vec3::new(-2.0, 105.0, -10.0),
             100.0,
-            Vec3::new(0.17, 0.6, 0.23),
+            Bxdfs::Conductor(conductor),
         )),
         Object::Triangle(Triangle::from_color(
             Vec3::new(-4.5, -3.0, -9.0),
