@@ -1,5 +1,5 @@
 use crate::{
-    bxdf::{conductor_bxdf::ConductorBxdf, diffuse_bxdf::DiffuseBxdf},
+    bxdf::{conductor_bxdf::ConductorBxdf, dielectric_bxdf::DielectricBxdf, diffuse_bxdf::DiffuseBxdf},
     math::{Frame, Vec3},
 };
 
@@ -11,6 +11,7 @@ pub mod trowbridge_reitz_distribution;
 pub enum Bxdfs {
     Diffuse(DiffuseBxdf),
     Conductor(ConductorBxdf),
+    Dielectric(DielectricBxdf)
 }
 
 pub struct Bsdf {
@@ -70,6 +71,7 @@ impl Bxdf for Bxdfs {
         match self {
             Bxdfs::Diffuse(diffuse_bxdf) => diffuse_bxdf.f(w_o, w_i),
             Bxdfs::Conductor(conductor_bxdf) => conductor_bxdf.f(w_o, w_i),
+            Bxdfs::Dielectric(dielectric_bxdf) => dielectric_bxdf.f(w_o, w_i),
         }
     }
 
@@ -77,6 +79,7 @@ impl Bxdf for Bxdfs {
         match self {
             Bxdfs::Diffuse(diffuse_bxdf) => diffuse_bxdf.sample_f(w_o, uc, u),
             Bxdfs::Conductor(conductor_bxdf) => conductor_bxdf.sample_f(w_o, uc, u),
+            Bxdfs::Dielectric(dielectric_bxdf) => dielectric_bxdf.sample_f(w_o, uc, u),
         }
     }
 }
