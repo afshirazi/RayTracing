@@ -5,6 +5,7 @@ use crate::{
 
 pub mod diffuse_bxdf;
 pub mod conductor_bxdf;
+pub mod dielectric_bxdf;
 pub mod trowbridge_reitz_distribution;
 
 pub enum Bxdfs {
@@ -33,7 +34,7 @@ impl BsdfSample {
 
 pub trait Bxdf {
     fn f(&self, w_o: &Vec3, w_i: &Vec3) -> Vec3; // gonna change to sampled spectrum once I figure that out
-    fn sample_f(&self, w_o: &Vec3, u: f32, uc: (f32, f32)) -> Option<BsdfSample>;
+    fn sample_f(&self, w_o: &Vec3, uc: f32, u: (f32, f32)) -> Option<BsdfSample>;
     //fn pdf();
 }
 
@@ -72,10 +73,10 @@ impl Bxdf for Bxdfs {
         }
     }
 
-    fn sample_f(&self, w_o: &Vec3, u: f32, uc: (f32, f32)) -> Option<BsdfSample> {
+    fn sample_f(&self, w_o: &Vec3, uc: f32, u: (f32, f32)) -> Option<BsdfSample> {
         match self {
-            Bxdfs::Diffuse(diffuse_bxdf) => diffuse_bxdf.sample_f(w_o, u, uc),
-            Bxdfs::Conductor(conductor_bxdf) => conductor_bxdf.sample_f(w_o, u, uc),
+            Bxdfs::Diffuse(diffuse_bxdf) => diffuse_bxdf.sample_f(w_o, uc, u),
+            Bxdfs::Conductor(conductor_bxdf) => conductor_bxdf.sample_f(w_o, uc, u),
         }
     }
 }

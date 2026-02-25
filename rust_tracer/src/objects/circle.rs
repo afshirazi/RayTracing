@@ -59,7 +59,7 @@ impl RayOps for Circle {
     }
     
     fn get_mat(&self, norm: &Vec3, dpdu: &Vec3) -> Bsdf {
-        //TODO: figure out references
+        //TODO: figure out references, don't hardcode Diffuse lol
         let bxdf = DiffuseBxdf::new(self.color.clone());
         Bsdf::new(norm.clone(), dpdu.clone(), Bxdfs::Diffuse(bxdf))
     }
