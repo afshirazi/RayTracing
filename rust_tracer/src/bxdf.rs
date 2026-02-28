@@ -37,7 +37,7 @@ impl BsdfSample {
 }
 
 bitflags! {
-    struct BxdfFlags: u8 {
+    pub struct BxdfFlags: u8 {
         const Reflection = 1;
         const Transmission = 1 << 1;
         const Diffuse = 1 << 2;
