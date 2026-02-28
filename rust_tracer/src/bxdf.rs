@@ -1,3 +1,5 @@
+use bitflags::bitflags;
+
 use crate::{
     bxdf::{
         conductor_bxdf::ConductorBxdf, dielectric_bxdf::DielectricBxdf, diffuse_bxdf::DiffuseBxdf,
@@ -34,12 +36,29 @@ impl BsdfSample {
     }
 }
 
-// may add TransportMode later
+bitflags! {
+    struct BxdfFlags: u8 {
+        const Reflection = 1;
+        const Transmission = 1 << 1;
+        const Diffuse = 1 << 2;
+        const Glossy = 1 << 3;
+        const Specular = 1 << 4;
+
+        const DiffuseReflection = BxdfFlags::Diffuse.bits() | BxdfFlags::Reflection.bits();
+        const DiffuseTransmission = BxdfFlags::Diffuse.bits() | BxdfFlags::Transmission.bits();
+        const GlossyReflection = BxdfFlags::Glossy.bits() | BxdfFlags::Reflection.bits();
+        const GlossyTransmission = BxdfFlags::Glossy.bits() | BxdfFlags::Transmission.bits();
+        const SpecularReflection = BxdfFlags::Specular.bits() | BxdfFlags::Specular.bits();
+        const SpecularTransmission = BxdfFlags::Specular.bits() | BxdfFlags::Transmission.bits();
+        const All = BxdfFlags::Diffuse.bits() | BxdfFlags::Glossy.bits() | BxdfFlags::Specular.bits() | BxdfFlags::Reflection.bits() | BxdfFlags::Transmission.bits();
+    }
+}
 
 pub trait Bxdf {
     fn f(&self, w_o: &Vec3, w_i: &Vec3) -> Vec3; // gonna change to sampled spectrum once I figure that out
     fn sample_f(&self, w_o: &Vec3, uc: f32, u: (f32, f32)) -> Option<BsdfSample>;
     //fn pdf();
+    fn flags(&self) -> BxdfFlags;
 }
 
 impl Bsdf {
@@ -67,6 +86,10 @@ impl Bxdf for Bsdf {
         bs.w_i = self.frame.local_to_render(&bs.w_i);
         Some(bs)
     }
+    
+    fn flags(&self) -> BxdfFlags {
+        self.bxdf.flags()
+    }
 }
 
 impl Bxdf for Bxdfs {
@@ -83,6 +106,14 @@ impl Bxdf for Bxdfs {
             Bxdfs::Diffuse(diffuse_bxdf) => diffuse_bxdf.sample_f(w_o, uc, u),
             Bxdfs::Conductor(conductor_bxdf) => conductor_bxdf.sample_f(w_o, uc, u),
             Bxdfs::Dielectric(dielectric_bxdf) => dielectric_bxdf.sample_f(w_o, uc, u),
+        }
+    }
+    
+    fn flags(&self) -> BxdfFlags {
+        match self {
+            Bxdfs::Diffuse(f) => f.flags(),
+            Bxdfs::Conductor(f) => f.flags(),
+            Bxdfs::Dielectric(f) => f.flags(),
         }
     }
 }

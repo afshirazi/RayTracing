@@ -6,6 +6,8 @@ use crate::{
     },
 };
 
+use super::BxdfFlags;
+
 #[derive(Clone)]
 pub struct DielectricBxdf {
     microfacet_distrib: TrowbridgeReitzDistribution,
@@ -52,5 +54,19 @@ impl Bxdf for DielectricBxdf {
             return Some(BsdfSample::new(f, w_i, pdf));
         }
         unimplemented!("WIP, dependent on microfacet distribution work")
+    }
+    
+    fn flags(&self) -> BxdfFlags {
+        let flags = if self.eta == 1.0 {
+            BxdfFlags::Transmission
+        } else {
+            BxdfFlags::Transmission | BxdfFlags::Reflection
+        };
+
+        flags | if self.effectively_smooth() {
+            BxdfFlags::Specular
+        } else {
+            BxdfFlags::Glossy
+        }
     }
 }

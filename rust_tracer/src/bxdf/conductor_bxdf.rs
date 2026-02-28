@@ -3,6 +3,8 @@ use crate::{
     math::{Vec3, reflect::fresnel_complex_spec},
 };
 
+use super::BxdfFlags;
+
 #[derive(Clone)]
 pub struct ConductorBxdf {
     microfacet_distrib: TrowbridgeReitzDistribution,
@@ -40,5 +42,13 @@ impl Bxdf for ConductorBxdf {
             return Some(BsdfSample::new(f, w_i, 1.0));
         }
         unimplemented!("WIP, dependent on microfacet distribution work")
+    }
+    
+    fn flags(&self) -> BxdfFlags {
+        if self.effectively_smooth() {
+            BxdfFlags::SpecularReflection
+        } else {
+            BxdfFlags::GlossyReflection
+        }
     }
 }

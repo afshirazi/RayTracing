@@ -1,7 +1,7 @@
 use std::f64;
 
 use crate::{
-    bxdf::{BsdfSample, Bxdf},
+    bxdf::{BsdfSample, Bxdf, BxdfFlags},
     math::{self, Vec3},
 };
 
@@ -37,5 +37,9 @@ impl Bxdf for DiffuseBxdf {
             w_i,
             pdf,
         ))
+    }
+    
+    fn flags(&self) -> BxdfFlags {
+        BxdfFlags::DiffuseReflection
     }
 }
