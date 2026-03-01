@@ -48,22 +48,19 @@ impl Integrator for SimplePathIntegrator {
     ) -> Vec3 {
         let mut color_buf = Vec3::new(0.0, 0.0, 0.0);
 
-        let filtered_objects: Vec<&Object> = match src_obj {
-            Some(o) => objects.iter().filter(|other_obj| *other_obj != o).collect(),
-            None => objects.iter().collect(),
-        };
-
-        let intr_obj = filtered_objects
-            .iter()
-            .map(|obj| (obj, obj.get_intersect(ray, origin)))
-            .filter(|(_, intr)| intr.is_some())
-            .map(|(obj, intr)| (obj, intr.unwrap()))
-            .min_by(|(_, lv), (_, rv)| {
-                let ld = Vec3::euclid_dist_sq(lv, origin);
-                let rd = Vec3::euclid_dist_sq(rv, origin);
-                ld.total_cmp(&rd)
-            })
-            .map(|(obj, _)| *obj);
+        let intr_obj = objects
+                .iter()
+                .map(|obj| (obj, obj.get_intersect(ray, origin)))
+                .filter(|(obj, intr)| {
+                    src_obj.map_or(true, |src_obj| src_obj != *obj) && intr.is_some()
+                })
+                .map(|(obj, intr)| (obj, intr.unwrap()))
+                .min_by(|(_, lv), (_, rv)| {
+                    let ld = Vec3::euclid_dist_sq(lv, origin);
+                    let rd = Vec3::euclid_dist_sq(rv, origin);
+                    ld.total_cmp(&rd)
+                })
+                .map(|(obj, _)| obj);
 
         if intr_obj.is_none() {
             return Vec3::new(0.3, 0.3, 0.3);
