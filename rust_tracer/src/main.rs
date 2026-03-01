@@ -20,34 +20,34 @@ mod sampler;
 fn main() {
     let mut img = RgbImage::new(1600, 900);
 
-    let dielectric = DielectricBxdf::new(TrowbridgeReitzDistribution::zero(), 0.4);
+    let dielectric = DielectricBxdf::new(TrowbridgeReitzDistribution::zero(), 1.6);
     let conductor = ConductorBxdf::new(
         TrowbridgeReitzDistribution::zero(),
-        Vec3::new(0.5, 0.4, 0.3),
-        Vec3::new(0.3, 0.2, 0.1),
+        Vec3::new(0.1, 0.3, 1.4),
+        Vec3::new(3.1, 2.8, 2.0),
     );
     let objects = vec![
+        // Object::Circle(Circle::from_color(
+        //     Vec3::new(2.0, -4.0, -10.0),
+        //     2.0,
+        //     Bxdfs::Dielectric(dielectric),
+        // )),
         Object::Circle(Circle::from_color(
-            Vec3::new(2.0, -4.0, -10.0),
-            2.0,
-            Bxdfs::Dielectric(dielectric),
-        )),
-        Object::Circle(Circle::from_color(
-            Vec3::new(-2.0, 105.0, -10.0),
+            Vec3::new(0.0, 80.0, -150.0),
             100.0,
             Bxdfs::Conductor(conductor),
         )),
-        Object::Triangle(Triangle::from_color(
-            Vec3::new(-4.5, -3.0, -9.0),
-            Vec3::new(2.0, -3.0, -10.0),
-            Vec3::new(-3.5, 1.5, -11.0),
-            &Vec3::new(0.4, 0.2, 0.76),
-        )),
+        // Object::Triangle(Triangle::from_color(
+        //     Vec3::new(-4.5, -3.0, -9.0),
+        //     Vec3::new(2.0, -3.0, -10.0),
+        //     Vec3::new(-3.5, 1.5, -11.0),
+        //     &Vec3::new(0.4, 0.2, 0.76),
+        // )),
     ];
 
     let lights = vec![
-        PointLight::new(Vec3::new(2.3, -12.0, -3.0), Vec3::new(1.0, 1.0, 1.0)),
-        PointLight::new(Vec3::new(-1.3, 22.0, 10.0), Vec3::new(1.0, 1.0, 1.0)),
+        // PointLight::new(Vec3::new(2.3, -12.0, -3.0), Vec3::new(1.0, 1.0, 1.0)),
+        // PointLight::new(Vec3::new(-1.3, 22.0, 10.0), Vec3::new(1.0, 1.0, 1.0)),
     ];
 
     let camera = Camera::new(
@@ -55,10 +55,10 @@ fn main() {
         Vec3::new(0.0, 1.0, 0.0),
         Vec3::new(0.0, 0.0, -1.0),
         90_f64.to_radians(),
-        20,
+        1,
     );
 
     camera.render(&objects, &lights, &mut img);
 
-    img.save("after_conductor.png").unwrap();
+    img.save("test_conductor_light2.png").unwrap();
 }
