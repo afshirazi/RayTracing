@@ -55,7 +55,7 @@ impl Bxdf for DielectricBxdf {
         }
         unimplemented!("WIP, dependent on microfacet distribution work")
     }
-    
+
     fn flags(&self) -> BxdfFlags {
         let flags = if self.eta == 1.0 {
             BxdfFlags::Transmission
@@ -63,10 +63,11 @@ impl Bxdf for DielectricBxdf {
             BxdfFlags::Transmission | BxdfFlags::Reflection
         };
 
-        flags | if self.effectively_smooth() {
-            BxdfFlags::Specular
-        } else {
-            BxdfFlags::Glossy
-        }
+        flags
+            | if self.effectively_smooth() {
+                BxdfFlags::Specular
+            } else {
+                BxdfFlags::Glossy
+            }
     }
 }

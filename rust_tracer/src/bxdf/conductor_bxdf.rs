@@ -43,7 +43,7 @@ impl Bxdf for ConductorBxdf {
         }
         unimplemented!("WIP, dependent on microfacet distribution work")
     }
-    
+
     fn flags(&self) -> BxdfFlags {
         if self.effectively_smooth() {
             BxdfFlags::SpecularReflection
