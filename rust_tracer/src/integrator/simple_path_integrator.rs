@@ -45,22 +45,21 @@ impl Integrator for SimplePathIntegrator {
         lights: &[PointLight],
         src_obj: Option<&Object>,
         depth: u8,
+        spec_bounce: bool,
     ) -> Vec3 {
         let mut color_buf = Vec3::new(0.0, 0.0, 0.0);
 
         let intr_obj = objects
-                .iter()
-                .map(|obj| (obj, obj.get_intersect(ray, origin)))
-                .filter(|(obj, intr)| {
-                    src_obj.map_or(true, |src_obj| src_obj != *obj) && intr.is_some()
-                })
-                .map(|(obj, intr)| (obj, intr.unwrap()))
-                .min_by(|(_, lv), (_, rv)| {
-                    let ld = Vec3::euclid_dist_sq(lv, origin);
-                    let rd = Vec3::euclid_dist_sq(rv, origin);
-                    ld.total_cmp(&rd)
-                })
-                .map(|(obj, _)| obj);
+            .iter()
+            .map(|obj| (obj, obj.get_intersect(ray, origin)))
+            .filter(|(obj, intr)| src_obj.map_or(true, |src_obj| src_obj != *obj) && intr.is_some())
+            .map(|(obj, intr)| (obj, intr.unwrap()))
+            .min_by(|(_, lv), (_, rv)| {
+                let ld = Vec3::euclid_dist_sq(lv, origin);
+                let rd = Vec3::euclid_dist_sq(rv, origin);
+                ld.total_cmp(&rd)
+            })
+            .map(|(obj, _)| obj);
 
         if intr_obj.is_none() {
             return Vec3::new(0.3, 0.3, 0.3);
@@ -87,7 +86,7 @@ impl Integrator for SimplePathIntegrator {
         if let Some(bs) = bs
             && depth > 0
         {
-            let beta = bs.color * bs.w_i.dot(&normal).abs() / bs.pdf.into();
+            let beta = &bs.color * bs.w_i.dot(&normal).abs() / bs.pdf as f64;
             color_buf += Self::incident_radiance(
                 &bs.w_i,
                 &intr_point,
@@ -96,6 +95,7 @@ impl Integrator for SimplePathIntegrator {
                 lights,
                 Some(intr_obj),
                 depth - 1,
+                bs.is_specular(),
             )
             .elwise_mul(&beta);
         }

@@ -22,5 +22,6 @@ pub trait Integrator {
         lights: &[PointLight],
         src_obj: Option<&Object>,
         depth: u8,
+        spec_bounce: bool,
     ) -> Vec3;
 }
