@@ -36,6 +36,7 @@ impl Bxdf for DiffuseBxdf {
             &self.color * f64::consts::FRAC_1_PI,
             w_i,
             pdf,
+            self.flags()
         ))
     }
     

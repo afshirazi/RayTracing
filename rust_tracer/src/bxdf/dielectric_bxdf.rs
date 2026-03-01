@@ -51,7 +51,7 @@ impl Bxdf for DielectricBxdf {
                 (Vec3::new(trans_cos, trans_cos, trans_cos), p_trans)
             };
 
-            return Some(BsdfSample::new(f, w_i, pdf));
+            return Some(BsdfSample::new(f, w_i, pdf, self.flags()));
         }
         unimplemented!("WIP, dependent on microfacet distribution work")
     }

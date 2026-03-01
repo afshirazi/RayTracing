@@ -28,11 +28,21 @@ pub struct BsdfSample {
     pub color: Vec3,
     pub w_i: Vec3,
     pub pdf: f32,
+    flags: BxdfFlags,
 }
 
 impl BsdfSample {
-    pub fn new(color: Vec3, w_i: Vec3, pdf: f32) -> Self {
-        Self { color, w_i, pdf }
+    pub fn new(color: Vec3, w_i: Vec3, pdf: f32, flags: BxdfFlags) -> Self {
+        Self {
+            color,
+            w_i,
+            pdf,
+            flags,
+        }
+    }
+
+    pub fn is_specular(&self) -> bool {
+        self.flags.is_specular()
     }
 }
 
@@ -51,6 +61,28 @@ bitflags! {
         const SpecularReflection = BxdfFlags::Specular.bits() | BxdfFlags::Specular.bits();
         const SpecularTransmission = BxdfFlags::Specular.bits() | BxdfFlags::Transmission.bits();
         const All = BxdfFlags::Diffuse.bits() | BxdfFlags::Glossy.bits() | BxdfFlags::Specular.bits() | BxdfFlags::Reflection.bits() | BxdfFlags::Transmission.bits();
+    }
+}
+
+impl BxdfFlags {
+    pub fn is_reflection(&self) -> bool {
+        self.contains(BxdfFlags::Reflection)
+    }
+
+    pub fn is_transmission(&self) -> bool {
+        self.contains(BxdfFlags::Transmission)
+    }
+
+    pub fn is_diffuse(&self) -> bool {
+        self.contains(BxdfFlags::Diffuse)
+    }
+
+    pub fn is_glossy(&self) -> bool {
+        self.contains(BxdfFlags::Glossy)
+    }
+
+    pub fn is_specular(&self) -> bool {
+        self.contains(BxdfFlags::Specular)
     }
 }
 
@@ -86,7 +118,7 @@ impl Bxdf for Bsdf {
         bs.w_i = self.frame.local_to_render(&bs.w_i);
         Some(bs)
     }
-    
+
     fn flags(&self) -> BxdfFlags {
         self.bxdf.flags()
     }
@@ -108,7 +140,7 @@ impl Bxdf for Bxdfs {
             Bxdfs::Dielectric(dielectric_bxdf) => dielectric_bxdf.sample_f(w_o, uc, u),
         }
     }
-    
+
     fn flags(&self) -> BxdfFlags {
         match self {
             Bxdfs::Diffuse(f) => f.flags(),
