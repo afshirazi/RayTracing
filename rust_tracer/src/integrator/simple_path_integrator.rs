@@ -45,7 +45,6 @@ impl Integrator for SimplePathIntegrator {
         lights: &[PointLight],
         src_obj: Option<&Object>,
         depth: u8,
-        spec_bounce: bool,
     ) -> Vec3 {
         let mut color_buf = Vec3::new(0.0, 0.0, 0.0);
 
@@ -95,7 +94,6 @@ impl Integrator for SimplePathIntegrator {
                 lights,
                 Some(intr_obj),
                 depth - 1,
-                bs.is_specular(),
             )
             .elwise_mul(&beta);
         }

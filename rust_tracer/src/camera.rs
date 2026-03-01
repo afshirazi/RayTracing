@@ -39,7 +39,7 @@ impl Camera {
             let mut px_color = Vec3::empty_vec();
             for _ in 0..self.samples_per_px {
                 let ray = self.get_randomized_ray(x, y, 1600, 900);
-                px_color += li(&ray, &self.eye, &sampler, objects, lights, None, 5, true);
+                px_color += li(&ray, &self.eye, &sampler, objects, lights, None, 5);
             }
             px_color = px_color * self.sample_scale;
 
