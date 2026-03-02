@@ -1,4 +1,4 @@
-use std::f64;
+use std::f32;
 
 use crate::{
     bxdf::{BsdfSample, Bxdf, BxdfFlags},
@@ -19,7 +19,7 @@ impl DiffuseBxdf {
 impl Bxdf for DiffuseBxdf {
     fn f(&self, w_o: &Vec3, w_i: &Vec3) -> Vec3 {
         if super::same_hemisphere(w_o, w_i) {
-            &self.color * f64::consts::FRAC_1_PI
+            &self.color * f32::consts::FRAC_1_PI
         } else {
             Vec3::empty_vec()
         }
@@ -33,7 +33,7 @@ impl Bxdf for DiffuseBxdf {
         }
         let pdf = math::cosine_hemisphere_pdf(w_i.z.abs() as f32);
         Some(BsdfSample::new(
-            &self.color * f64::consts::FRAC_1_PI,
+            &self.color * f32::consts::FRAC_1_PI,
             w_i,
             pdf,
             self.flags(),

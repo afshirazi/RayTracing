@@ -24,7 +24,7 @@ impl Camera {
             eye,
             up,
             look_at,
-            d: 1.0 / (fov_y / 2.0).tan(),
+            d: (fov_y / 2.0).tan().recip(),
             samples_per_px,
             sample_scale: (samples_per_px as f64).recip(),
         }
@@ -54,14 +54,15 @@ impl Camera {
     }
 
     fn get_randomized_ray(&self, x: u32, y: u32, w: u32, h: u32) -> Vec3 {
+        let (x, y, w, h) = (x as f32, y as f32, w as f32, h as f32);
         let l = (&self.look_at - &self.eye).norm();
         let v = l.cross(&self.up).norm();
         let u = v.cross(&l);
 
-        let wh_ratio = w as f64 / h as f64;
+        let wh_ratio = w as f32 / h as f32;
 
-        let offset_x = (random::<f64>() - 0.5 + x as f64) / w as f64;
-        let offset_y = (random::<f64>() - 0.5 + y as f64) / h as f64;
+        let offset_x = (random::<f32>() - 0.5 + x) / w;
+        let offset_y = (random::<f32>() - 0.5 + y) / h;
 
         let top_left = &(&self.eye + &(self.d * &l) - (wh_ratio * &v)) - &u;
         let p = top_left + (2.0 * wh_ratio * &v * offset_x) + (2.0 * &u * offset_y);

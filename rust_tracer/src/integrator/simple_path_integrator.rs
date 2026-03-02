@@ -85,7 +85,7 @@ impl Integrator for SimplePathIntegrator {
         if let Some(bs) = bs
             && depth > 0
         {
-            let beta = &bs.color * bs.w_i.dot(&normal).abs() / bs.pdf as f64;
+            let beta = &bs.color * bs.w_i.dot(&normal).abs() / bs.pdf;
             color_buf += Self::incident_radiance(
                 &bs.w_i,
                 &intr_point,
