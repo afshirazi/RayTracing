@@ -1,16 +1,16 @@
 use super::NumExtensions;
-use num::complex::Complex32;
+use num::{Float, complex::Complex32};
 use std::ops::{Add, AddAssign, Div, Mul, Neg, Sub};
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct Vec3 {
-    pub x: f64,
-    pub y: f64,
-    pub z: f64,
+    pub x: f32,
+    pub y: f32,
+    pub z: f32,
 }
 
 impl Vec3 {
-    pub fn new(x: f64, y: f64, z: f64) -> Vec3 {
+    pub fn new(x: f32, y: f32, z: f32) -> Vec3 {
         Vec3 { x, y, z }
     }
 
@@ -31,7 +31,7 @@ impl Vec3 {
     }
 
     /// Returns the dot product
-    pub fn dot(&self, other: &Vec3) -> f64 {
+    pub fn dot(&self, other: &Vec3) -> f32 {
         self.x * other.x + self.y * other.y + self.z * other.z
     }
 
@@ -45,8 +45,8 @@ impl Vec3 {
     }
 
     /// Vector magnitude
-    pub fn mag(&self) -> f64 {
-        f64::sqrt(self.x * self.x + self.y * self.y + self.z * self.z)
+    pub fn mag(&self) -> f32 {
+        (self.x * self.x + self.y * self.y + self.z * self.z).sqrt()
     }
 
     /// Returns a normalized vector
@@ -55,7 +55,7 @@ impl Vec3 {
     }
 
     /// Squared Euclidean distance, useful for comparisons
-    pub fn euclid_dist_sq(v1: &Vec3, v2: &Vec3) -> f64 {
+    pub fn euclid_dist_sq(v1: &Vec3, v2: &Vec3) -> f32 {
         let dx = v1.x - v2.x;
         let dy = v1.y - v2.y;
         let dz = v1.z - v2.z;
@@ -79,7 +79,7 @@ pub mod reflect {
 
     /// Transmits `w_i` into the material. Expects `n` to be normalized.
     pub fn refract(w_i: &Vec3, n: &Vec3, eta: f32) -> Option<Vec3> {
-        let mut eta = eta as f64;
+        let mut eta = eta;
         let dummy; // TODO: check if you want to make Vec3 implement Copy instead.
         let mut n = n;
         let mut cos_theta_i = w_i.dot(n);
@@ -91,7 +91,7 @@ pub mod reflect {
             n = &dummy;
         }
 
-        let sin2_theta_i = f64::max(1.0 - cos_theta_i * cos_theta_i, 0.0);
+        let sin2_theta_i = f32::max(1.0 - cos_theta_i * cos_theta_i, 0.0);
         let sin2_theta_t = sin2_theta_i / eta.sqr();
         if sin2_theta_t > 1.0 {
             return None;
@@ -141,9 +141,9 @@ pub mod reflect {
     pub fn fresnel_complex_spec(cos_theta_i: f32, eta: &Vec3, k: &Vec3) -> Vec3 {
         let mut res = Vec3::empty_vec();
         // TODO: clean up (f64 -> f32, Vec3 -> SampledSpectrum, build the result more dynamically)
-        res.x = fresnel_complex(cos_theta_i, Complex32::new(eta.x as f32, k.x as f32)) as f64;
-        res.y = fresnel_complex(cos_theta_i, Complex32::new(eta.y as f32, k.y as f32)) as f64;
-        res.z = fresnel_complex(cos_theta_i, Complex32::new(eta.z as f32, k.z as f32)) as f64;
+        res.x = fresnel_complex(cos_theta_i, Complex32::new(eta.x, k.x));
+        res.y = fresnel_complex(cos_theta_i, Complex32::new(eta.y, k.y));
+        res.z = fresnel_complex(cos_theta_i, Complex32::new(eta.z, k.z));
 
         res
     }
@@ -155,6 +155,7 @@ impl Mul<f64> for Vec3 {
     type Output = Vec3;
 
     fn mul(self, rhs: f64) -> Self::Output {
+        let rhs = rhs as f32;
         Vec3 {
             x: self.x * rhs,
             y: self.y * rhs,
@@ -167,6 +168,7 @@ impl Mul<f64> for &Vec3 {
     type Output = Vec3;
 
     fn mul(self, rhs: f64) -> Self::Output {
+        let rhs = rhs as f32;
         Vec3 {
             x: self.x * rhs,
             y: self.y * rhs,
@@ -179,6 +181,7 @@ impl Div<f64> for Vec3 {
     type Output = Vec3;
 
     fn div(self, rhs: f64) -> Self::Output {
+        let rhs = rhs as f32;
         Vec3 {
             x: self.x / rhs,
             y: self.y / rhs,
@@ -191,6 +194,55 @@ impl Div<f64> for &Vec3 {
     type Output = Vec3;
 
     fn div(self, rhs: f64) -> Self::Output {
+        let rhs = rhs as f32;
+        Vec3 {
+            x: self.x / rhs,
+            y: self.y / rhs,
+            z: self.z / rhs,
+        }
+    }
+}
+
+impl Mul<f32> for Vec3 {
+    type Output = Vec3;
+
+    fn mul(self, rhs: f32) -> Self::Output {
+        Vec3 {
+            x: self.x * rhs,
+            y: self.y * rhs,
+            z: self.z * rhs,
+        }
+    }
+}
+
+impl Mul<f32> for &Vec3 {
+    type Output = Vec3;
+
+    fn mul(self, rhs: f32) -> Self::Output {
+        Vec3 {
+            x: self.x * rhs,
+            y: self.y * rhs,
+            z: self.z * rhs,
+        }
+    }
+}
+
+impl Div<f32> for Vec3 {
+    type Output = Vec3;
+
+    fn div(self, rhs: f32) -> Self::Output {
+        Vec3 {
+            x: self.x / rhs,
+            y: self.y / rhs,
+            z: self.z / rhs,
+        }
+    }
+}
+
+impl Div<f32> for &Vec3 {
+    type Output = Vec3;
+
+    fn div(self, rhs: f32) -> Self::Output {
         Vec3 {
             x: self.x / rhs,
             y: self.y / rhs,
@@ -272,6 +324,18 @@ impl Neg for &Vec3 {
 }
 
 impl Mul<&Vec3> for f64 {
+    type Output = Vec3;
+
+    fn mul(self, rhs: &Vec3) -> Self::Output {
+        Vec3::new(
+            self as f32 * rhs.x,
+            self as f32 * rhs.y,
+            self as f32 * rhs.z,
+        )
+    }
+}
+
+impl Mul<&Vec3> for f32 {
     type Output = Vec3;
 
     fn mul(self, rhs: &Vec3) -> Self::Output {

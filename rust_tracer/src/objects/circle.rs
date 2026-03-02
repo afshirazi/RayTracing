@@ -1,5 +1,3 @@
-use core::f64;
-
 use super::RayOps;
 use crate::{
     bxdf::{Bsdf, Bxdfs},
@@ -8,12 +6,12 @@ use crate::{
 
 pub struct Circle {
     center: Vec3,
-    radius: f64,
+    radius: f32,
     bxdf: Bxdfs,
 }
 
 impl Circle {
-    pub fn from_color(center: Vec3, radius: f64, bxdf: Bxdfs) -> Circle {
+    pub fn from_color(center: Vec3, radius: f32, bxdf: Bxdfs) -> Circle {
         Circle {
             center,
             radius,
@@ -29,11 +27,11 @@ impl RayOps for Circle {
         let c = (origin - &self.center).dot(&(origin - &self.center)) - self.radius * self.radius;
 
         // quadratic formula
-        let mut t1 = (-b + f64::sqrt(b * b - 4.0 * c)) / 2.0;
-        let mut t2 = (-b - f64::sqrt(b * b - 4.0 * c)) / 2.0;
+        let mut t1 = (-b + f32::sqrt(b * b - 4.0 * c)) / 2.0;
+        let mut t2 = (-b - f32::sqrt(b * b - 4.0 * c)) / 2.0;
 
-        t1 = if t1 < 0.0 { f64::NAN } else { t1 };
-        t2 = if t2 < 0.0 { f64::NAN } else { t2 };
+        t1 = if t1 < 0.0 { f32::NAN } else { t1 };
+        t2 = if t2 < 0.0 { f32::NAN } else { t2 };
 
         if t1.is_nan() && t2.is_nan() {
             None
@@ -54,13 +52,13 @@ impl RayOps for Circle {
 
     fn get_tangent(&self, point: &Vec3) -> Vec3 {
         let a =
-            (point.x * point.x + self.center.x * self.center.x) / (2f64 * point.x * self.center.x);
+            (point.x * point.x + self.center.x * self.center.x) / (2.0 * point.x * self.center.x);
         let b =
-            (point.y * point.y + self.center.y * self.center.y) / (2f64 * point.y * self.center.y);
+            (point.y * point.y + self.center.y * self.center.y) / (2.0 * point.y * self.center.y);
         // let c = (point.z * point.z + self.center.z * self.center.z) / 2f64 * point.z * self.center.z; // c should be the one unneeded
         // let d = self.radius * self.radius; // unneeded
 
-        Vec3::new(-a.recip(), b.recip(), 0f64).norm()
+        Vec3::new(-a.recip(), b.recip(), 0.0).norm()
     }
 
     fn get_mat(&self, norm: &Vec3, dpdu: &Vec3) -> Bsdf {

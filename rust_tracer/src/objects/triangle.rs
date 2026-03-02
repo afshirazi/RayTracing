@@ -36,7 +36,7 @@ impl RayOps for Triangle {
 
         let det = e1.dot(&ray_cross_e2); // (R x e2) . e1
 
-        if det < f64::EPSILON && det > -f64::EPSILON {
+        if det < f32::EPSILON && det > -f32::EPSILON {
             return None;
         }
 
@@ -56,7 +56,7 @@ impl RayOps for Triangle {
         }
 
         let t = inv_det * s_cross_e1.dot(&e2);
-        if t > f64::EPSILON {
+        if t > f32::EPSILON {
             Some(origin + &(ray * t))
         } else {
             // t is negative, there is a line intersection but in the opposite direction of the ray.

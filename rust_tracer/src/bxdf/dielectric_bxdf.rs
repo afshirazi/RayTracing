@@ -43,11 +43,11 @@ impl Bxdf for DielectricBxdf {
 
             let (f, pdf) = if uc < p_refl {
                 w_i = Vec3::new(-w_o.x, -w_o.y, w_o.z);
-                let refl_cos = p_refl as f64 / w_i.z.abs();
+                let refl_cos = p_refl / w_i.z.abs();
                 (Vec3::new(refl_cos, refl_cos, refl_cos), p_refl)
             } else {
                 w_i = refract(&w_o, &Vec3::new(0.0, 0.0, 1.0), self.eta)?;
-                let trans_cos = p_trans as f64 / w_i.z.abs();
+                let trans_cos = p_trans / w_i.z.abs();
                 (Vec3::new(trans_cos, trans_cos, trans_cos), p_trans)
             };
 
