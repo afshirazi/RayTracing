@@ -1,6 +1,9 @@
 use std::ops::{Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign, Sub, SubAssign};
 
-use crate::spectrum::N_SPECTRUM_SAMPLES;
+use crate::{
+    math::lerp,
+    spectrum::{MAX_LAMBDA, MIN_LAMBDA, N_SPECTRUM_SAMPLES},
+};
 
 pub struct SampledSpectrum {
     values: [f32; N_SPECTRUM_SAMPLES],
@@ -36,6 +39,38 @@ impl SampledSpectrum {
     }
 }
 
+pub struct SampledWavelengths {
+    lambdas: [f32; N_SPECTRUM_SAMPLES],
+    pdf: [f32; N_SPECTRUM_SAMPLES],
+}
+
+impl SampledWavelengths {
+    pub fn sample_uniform(u: f32, lambda_min: Option<f32>, lambda_max: Option<f32>) -> Self {
+        let lambda_min = lambda_min.unwrap_or(MIN_LAMBDA);
+        let lambda_max = lambda_max.unwrap_or(MAX_LAMBDA);
+
+        let mut lambdas = [0.0; N_SPECTRUM_SAMPLES];
+        lambdas[0] = lerp(u, lambda_min, lambda_max);
+
+        let delta = (lambda_min + lambda_max) / N_SPECTRUM_SAMPLES as f32;
+
+        for i in 1..N_SPECTRUM_SAMPLES {
+            lambdas[i] = lambdas[i - 1] + delta;
+            if lambdas[i] > lambda_max {
+                lambdas[i] = lambda_min + (lambdas[i] - lambda_max);
+            }
+        }
+
+        let pdf = [1.0 / (lambda_max - lambda_min); N_SPECTRUM_SAMPLES];
+
+        Self { lambdas, pdf }
+    }
+
+    pub fn pdf(&self) -> SampledSpectrum {
+        SampledSpectrum::new(self.pdf)
+    }
+}
+
 /////////////// OPERATOR OVERLOADING /////////////////////
 
 impl Index<usize> for SampledSpectrum {
@@ -49,6 +84,14 @@ impl Index<usize> for SampledSpectrum {
 impl IndexMut<usize> for SampledSpectrum {
     fn index_mut(&mut self, index: usize) -> &mut Self::Output {
         &mut self.values[index]
+    }
+}
+
+impl Index<usize> for SampledWavelengths {
+    type Output = f32;
+
+    fn index(&self, index: usize) -> &Self::Output {
+        &self.lambdas[index]
     }
 }
 

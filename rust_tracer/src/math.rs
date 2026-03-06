@@ -35,6 +35,10 @@ pub fn cosine_hemisphere_pdf(cos_theta: f32) -> f32 {
     cos_theta * f32::consts::FRAC_1_PI
 }
 
+pub fn lerp(x: f32, a: f32, b: f32) -> f32 {
+    (1.0 - x) * a + x * b
+}
+
 /////////////// CONVENIENCE EXTENSIONS /////////////////////
 
 pub trait NumExtensions {
