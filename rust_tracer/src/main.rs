@@ -16,6 +16,7 @@ mod light;
 mod math;
 mod objects;
 mod sampler;
+mod spectrum;
 
 fn main() {
     let mut img = RgbImage::new(1600, 900);
@@ -60,5 +61,5 @@ fn main() {
 
     camera.render(&objects, &lights, &mut img);
 
-    img.save("test_random_scene.png").unwrap();
+    img.save("test_f32.png").unwrap();
 }
