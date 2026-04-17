@@ -1,8 +1,8 @@
 use super::NumExtensions;
-use num::{Float, complex::Complex32};
+use num::{complex::Complex32};
 use std::ops::{Add, AddAssign, Div, Mul, Neg, Sub};
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Default)]
 pub struct Vec3 {
     pub x: f32,
     pub y: f32,
