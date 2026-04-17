@@ -1,4 +1,8 @@
-use crate::{light::Light, math::Vec3, spectrum::sampled_spectrum::{SampledSpectrum, SampledWavelengths}};
+use crate::{
+    light::Light,
+    math::Vec3,
+    spectrum::sampled_spectrum::{SampledSpectrum, SampledWavelengths},
+};
 
 use super::{LightLiSample, LightSampleContext, LightType};
 
@@ -30,7 +34,14 @@ impl Light for PointLight {
         0.0
     }
 
-    fn radiance(&self, point: &Vec3, normal: &Vec3, uv: (f32, f32), w: &Vec3, lambdas: &SampledWavelengths) -> SampledSpectrum {
-        todo!()
+    fn radiance(
+        &self,
+        _: &Vec3,
+        _: &Vec3,
+        _: (f32, f32),
+        _: &Vec3,
+        _: &SampledWavelengths,
+    ) -> SampledSpectrum {
+        unimplemented!("Should not get called for point lights.")
     }
 }
