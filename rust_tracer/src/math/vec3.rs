@@ -1,6 +1,6 @@
 use super::NumExtensions;
 use num::{complex::Complex32};
-use std::ops::{Add, AddAssign, Div, Mul, Neg, Sub};
+use std::ops::{Add, AddAssign, Div, Index, Mul, Neg, Sub};
 
 #[derive(Debug, PartialEq, Clone, Default)]
 pub struct Vec3 {
@@ -66,6 +66,19 @@ impl Vec3 {
     /// multiply each element by corresponding element in the other Vec3
     pub fn elwise_mul(&self, rhs: &Vec3) -> Vec3 {
         Vec3::new(self.x * rhs.x, self.y * rhs.y, self.z * rhs.z)
+    }
+}
+
+impl Index<usize> for Vec3 {
+    type Output = f32;
+
+    fn index(&self, index: usize) -> &Self::Output {
+        match index {
+            0 => &self.x,
+            1 => &self.y,
+            2 => &self.z,
+            oob => panic!("Index {oob} out of bounds for a Vec3")
+        }
     }
 }
 
