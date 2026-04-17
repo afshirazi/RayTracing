@@ -1,6 +1,6 @@
 mod frame;
 mod vec3;
-mod mat;
+mod matrix;
 
 use std::f32;
 
