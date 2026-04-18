@@ -1,12 +1,16 @@
 use std::ops::{Add, Div, Index, IndexMut, Mul, Sub};
 
+use num::traits::Inv;
+
+use crate::math::difference_of_products;
+
 // templating the size is probably overkill but it's fun and I want to do it :)
 
 pub struct Matrix<const N: usize> {
     mat: [[f32; N]; N],
 }
 
-impl <const N: usize> Default for Matrix<N> {
+impl<const N: usize> Default for Matrix<N> {
     fn default() -> Self {
         Self::zero()
     }
@@ -22,7 +26,59 @@ impl<const N: usize> Matrix<N> {
     }
 }
 
-/// Generic matrix-vector multiply. 
+impl Matrix<4> {
+    pub fn determinant(&self) -> f32 {
+        todo!()
+    }
+
+    pub fn inverse(&self) -> Self {
+        todo!()
+    }
+}
+
+impl Matrix<3> {
+    pub fn determinant(&self) -> f32 {
+        todo!()
+    }
+
+    pub fn inverse(&self) -> Self {
+        todo!()
+    }
+}
+
+impl Matrix<2> {
+    pub fn determinant(&self) -> f32 {
+        difference_of_products(self[0][0], self[1][1], self[0][1], self[1][0])
+    }
+
+    pub fn inverse(&self) -> Option<Self> {
+        let det = self.determinant();
+        if det != 0.0 {
+            let tmp_mat = Matrix::new([[self[1][1], -self[0][1]],[-self[1][0], self[0][0]]]);
+            let inv_mat = tmp_mat * det.inv();
+            Some(inv_mat)
+        } else {
+            None
+        }
+    }
+}
+
+impl Matrix<1> {
+    pub fn determinant(&self) -> f32 {
+        self[0][0]
+    }
+
+    pub fn inverse(&self) -> Option<Self> {
+        if self[0][0] == 0.0 {
+            None
+        } else {
+            Some(Matrix::new([[self[0][0].inv()]]))
+        }
+    }
+}
+
+
+/// Generic matrix-vector multiply.
 pub fn mul<R, T, const N: usize>(mat: &Matrix<N>, v: &T) -> R
 where
     R: IndexMut<usize, Output = f32> + Default,
@@ -77,6 +133,20 @@ impl<const N: usize> Sub for Matrix<N> {
 }
 
 impl<const N: usize> Mul<f32> for &Matrix<N> {
+    type Output = Matrix<N>;
+
+    fn mul(self, rhs: f32) -> Self::Output {
+        let mut mat = [[0.0; N]; N];
+        for i in 0..N {
+            for j in 0..N {
+                mat[i][j] = self[i][j] * rhs;
+            }
+        }
+        Matrix::new(mat)
+    }
+}
+
+impl<const N: usize> Mul<f32> for Matrix<N> {
     type Output = Matrix<N>;
 
     fn mul(self, rhs: f32) -> Self::Output {

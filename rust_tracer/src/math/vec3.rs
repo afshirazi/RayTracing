@@ -1,5 +1,5 @@
 use super::NumExtensions;
-use num::{complex::Complex32};
+use num::complex::Complex32;
 use std::ops::{Add, AddAssign, Div, Index, Mul, Neg, Sub};
 
 #[derive(Debug, PartialEq, Clone, Default)]
@@ -77,7 +77,7 @@ impl Index<usize> for Vec3 {
             0 => &self.x,
             1 => &self.y,
             2 => &self.z,
-            oob => panic!("Index {oob} out of bounds for a Vec3")
+            oob => panic!("Index {oob} out of bounds for a Vec3"),
         }
     }
 }

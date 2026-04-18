@@ -1,6 +1,6 @@
 mod frame;
-mod vec3;
 mod matrix;
+mod vec3;
 
 use std::f32;
 
@@ -38,6 +38,14 @@ pub fn cosine_hemisphere_pdf(cos_theta: f32) -> f32 {
 
 pub fn lerp(x: f32, a: f32, b: f32) -> f32 {
     (1.0 - x) * a + x * b
+}
+
+/// computes `a*b - c*d` with error propagation
+pub fn difference_of_products(a: f32, b: f32, c: f32, d: f32) -> f32 {
+    let cd = c * d;
+    let diff_of_prods = f32::mul_add(a, b, -cd);
+    let error = f32::mul_add(-c, d, cd);
+    diff_of_prods + error
 }
 
 /////////////// CONVENIENCE EXTENSIONS /////////////////////
