@@ -5,7 +5,7 @@ use num::traits::Inv;
 use crate::math::difference_of_products;
 
 // templating the size is probably overkill but it's fun and I want to do it :)
-
+#[derive(Debug)]
 pub struct Matrix<const N: usize> {
     mat: [[f32; N]; N],
 }
@@ -45,7 +45,7 @@ impl Matrix<3> {
         f32::mul_add(
             self[0][0],
             minor_12,
-            difference_of_products(self[0][2], minor_01, -self[0][1], minor_02),
+            difference_of_products(self[0][2], minor_01, self[0][1], minor_02),
         )
     }
 
@@ -196,5 +196,54 @@ impl<const N: usize> Div<f32> for &Matrix<N> {
             }
         }
         Matrix::new(mat)
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_mat3_det() {
+        let m = Matrix::new([
+            [3.5, 8.0, 6.0],
+            [2.0, 4.0, 6.0],
+            [5.0, 1.5, 7.0],
+        ]);
+
+        let expected = 92.5;
+        let actual = m.determinant();
+
+        assert_eq!(expected, actual, "Expected {expected}, but got {actual}");
+    }
+
+    #[test]
+    fn test_mat3_inv() {
+        let m = Matrix::new([
+            [3.5, 0.0, 0.0],
+            [0.0, 4.0, 0.0],
+            [0.0, 0.0, 7.0],
+        ]);
+
+        let expected = Matrix::new([
+            [3.5_f32.inv(), 0.0, 0.0],
+            [0.0, 4.0_f32.inv(), 0.0],
+            [0.0, 0.0, 7.0_f32.inv()],
+        ]);
+
+        let actual = m.inverse().unwrap();
+
+        assert!(eq_mat_approx(&expected, &actual), "Mismatched matrices: \nexpected = {:?}, \nactual = {:?}", expected, actual);
+    }
+
+    fn eq_mat_approx<const N: usize>(a: &Matrix<N>, b: &Matrix<N>) -> bool {
+        for i in 0..N {
+            for j in 0..N {
+                if (a[i][j] - b[i][j]) > f32::EPSILON {
+                    return false
+                }
+            }
+        }
+        true
     }
 }
