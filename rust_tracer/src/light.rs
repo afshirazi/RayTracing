@@ -14,7 +14,14 @@ pub trait Light {
     fn pdf_li(&self, ctx: &LightSampleContext, w_i: Vec3) -> f32;
     /// Also referred to as L(). Should only be called when intersecting a light, i.e. light has geometry to it.
     // TODO: define point 2D and 3D and vec 2d?
-    fn radiance(&self, point: &Vec3, normal: &Vec3, uv: (f32, f32), w: &Vec3, lambdas: &SampledWavelengths) -> SampledSpectrum;
+    fn radiance(
+        &self,
+        point: &Vec3,
+        normal: &Vec3,
+        uv: (f32, f32),
+        w: &Vec3,
+        lambdas: &SampledWavelengths,
+    ) -> SampledSpectrum;
     // fn le(&self, origin: Vec3, dir: Vec3, lambdas: &SampledWavelengths) -> SampledSpectrum;
 }
 

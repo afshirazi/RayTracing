@@ -107,9 +107,9 @@ impl Matrix<4> {
 
 // for now, just multiplies normally. TODO: look into propagating error https://pbr-book.org/4ed/Utilities/Mathematical_Infrastructure#Error-FreeTransformations
 fn inner_product(nums: &[f32]) -> f32 {
-    nums.iter()
-        .map(|f| *f)
-        .reduce(|a, b| a * b)
+    nums.chunks_exact(2)
+        .map(|c| c[0] * c[1])
+        .reduce(|a, b| a + b)
         .expect("Should not be empty")
 }
 
@@ -280,12 +280,46 @@ impl<const N: usize> Div<f32> for &Matrix<N> {
 mod test {
     use super::*;
 
-    const MAT4: [[f32; 4]; 4] = [
-        [3.5, 8.0, 6.0, 0.0],
-        [2.0, 4.0, 6.0, 0.0],
-        [5.0, 1.5, 7.0, 0.0],
-        [5.0, 1.5, 7.0, 0.0],
-    ];
+    #[test]
+    fn test_mat4_det() {
+        let m = Matrix::new([
+            [3.5, 8.0, 6.0, 8.0],
+            [2.0, 4.0, 6.0, 7.0],
+            [5.0, 1.5, 7.0, 0.0],
+            [5.0, 5.5, 3.0, 1.0],
+        ]);
+
+        let expected = 163.5;
+        let actual = m.determinant();
+
+        assert_eq!(expected, actual, "Expected {expected}, but got {actual}");
+    }
+
+    #[test]
+    fn test_mat4_inv() {
+        let m = Matrix::new([
+            [3.5, 0.0, 0.0, 0.0],
+            [0.0, 4.0, 0.0, 0.0],
+            [0.0, 0.0, 7.0, 0.0],
+            [0.0, 0.0, 0.0, 1.0],
+        ]);
+
+        let expected = Matrix::new([
+            [3.5_f32.inv(), 0.0, 0.0, 0.0],
+            [0.0, 4.0_f32.inv(), 0.0, 0.0],
+            [0.0, 0.0, 7.0_f32.inv(), 0.0],
+            [0.0, 0.0, 0.0, 1.0],
+        ]);
+
+        let actual = m.inverse().unwrap();
+
+        assert!(
+            eq_mat_approx(&expected, &actual),
+            "Mismatched matrices: \nexpected = {:?}, \nactual = {:?}",
+            expected,
+            actual
+        );
+    }
 
     #[test]
     fn test_mat3_det() {

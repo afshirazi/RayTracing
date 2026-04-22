@@ -3,8 +3,8 @@ use std::ops::Index;
 use sampled_spectrum::SampledSpectrum;
 use sampled_spectrum::SampledWavelengths;
 
-pub mod sampled_spectrum;
 pub mod densely_sampled_spectrum;
+pub mod sampled_spectrum;
 
 // pbrt defines these so I will too :)
 const MIN_LAMBDA: f32 = 360.0;
