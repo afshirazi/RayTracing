@@ -28,12 +28,89 @@ impl<const N: usize> Matrix<N> {
 
 impl Matrix<4> {
     pub fn determinant(&self) -> f32 {
-        todo!()
+        // https://www.geometrictools.com/Documentation/LaplaceExpansionTheorem.pdf
+        let s0 = difference_of_products(self[0][0], self[1][1], self[1][0], self[0][1]);
+        let s1 = difference_of_products(self[0][0], self[1][2], self[1][0], self[0][2]);
+        let s2 = difference_of_products(self[0][0], self[1][3], self[1][0], self[0][3]);
+
+        let s3 = difference_of_products(self[0][1], self[1][2], self[1][1], self[0][2]);
+        let s4 = difference_of_products(self[0][1], self[1][3], self[1][1], self[0][3]);
+        let s5 = difference_of_products(self[0][2], self[1][3], self[1][2], self[0][3]);
+
+        let c0 = difference_of_products(self[2][0], self[3][1], self[3][0], self[2][1]);
+        let c1 = difference_of_products(self[2][0], self[3][2], self[3][0], self[2][2]);
+        let c2 = difference_of_products(self[2][0], self[3][3], self[3][0], self[2][3]);
+
+        let c3 = difference_of_products(self[2][1], self[3][2], self[3][1], self[2][2]);
+        let c4 = difference_of_products(self[2][1], self[3][3], self[3][1], self[2][3]);
+        let c5 = difference_of_products(self[2][2], self[3][3], self[3][2], self[2][3]);
+
+        difference_of_products(s0, c5, s1, c4)
+            + difference_of_products(s2, c3, -s3, c2)
+            + difference_of_products(s5, c0, s4, c1)
     }
 
     pub fn inverse(&self) -> Option<Self> {
-        todo!()
+        // taken from https://github.com/mmp/pbrt-v4/blob/master/src/pbrt/util/math.h#L1571
+        let s0 = difference_of_products(self[0][0], self[1][1], self[1][0], self[0][1]);
+        let s1 = difference_of_products(self[0][0], self[1][2], self[1][0], self[0][2]);
+        let s2 = difference_of_products(self[0][0], self[1][3], self[1][0], self[0][3]);
+
+        let s3 = difference_of_products(self[0][1], self[1][2], self[1][1], self[0][2]);
+        let s4 = difference_of_products(self[0][1], self[1][3], self[1][1], self[0][3]);
+        let s5 = difference_of_products(self[0][2], self[1][3], self[1][2], self[0][3]);
+
+        let c0 = difference_of_products(self[2][0], self[3][1], self[3][0], self[2][1]);
+        let c1 = difference_of_products(self[2][0], self[3][2], self[3][0], self[2][2]);
+        let c2 = difference_of_products(self[2][0], self[3][3], self[3][0], self[2][3]);
+
+        let c3 = difference_of_products(self[2][1], self[3][2], self[3][1], self[2][2]);
+        let c4 = difference_of_products(self[2][1], self[3][3], self[3][1], self[2][3]);
+        let c5 = difference_of_products(self[2][2], self[3][3], self[3][2], self[2][3]);
+
+        let determinant = inner_product(&[s0, c5, -s1, c4, s2, c3, s3, c2, s5, c0, -s4, c1]);
+        if determinant == 0.0 {
+            return None;
+        }
+        let s = determinant.inv();
+
+        let inv = [
+            [
+                s * inner_product(&[self[1][1], c5, self[1][3], c3, -self[1][2], c4]),
+                s * inner_product(&[-self[0][1], c5, self[0][2], c4, -self[0][3], c3]),
+                s * inner_product(&[self[3][1], s5, self[3][3], s3, -self[3][2], s4]),
+                s * inner_product(&[-self[2][1], s5, self[2][2], s4, -self[2][3], s3]),
+            ],
+            [
+                s * inner_product(&[-self[1][0], c5, self[1][2], c2, -self[1][3], c1]),
+                s * inner_product(&[self[0][0], c5, self[0][3], c1, -self[0][2], c2]),
+                s * inner_product(&[-self[3][0], s5, self[3][2], s2, -self[3][3], s1]),
+                s * inner_product(&[self[2][0], s5, self[2][3], s1, -self[2][2], s2]),
+            ],
+            [
+                s * inner_product(&[self[1][0], c4, self[1][3], c0, -self[1][1], c2]),
+                s * inner_product(&[-self[0][0], c4, self[0][1], c2, -self[0][3], c0]),
+                s * inner_product(&[self[3][0], s4, self[3][3], s0, -self[3][1], s2]),
+                s * inner_product(&[-self[2][0], s4, self[2][1], s2, -self[2][3], s0]),
+            ],
+            [
+                s * inner_product(&[-self[1][0], c3, self[1][1], c1, -self[1][2], c0]),
+                s * inner_product(&[self[0][0], c3, self[0][2], c0, -self[0][1], c1]),
+                s * inner_product(&[-self[3][0], s3, self[3][1], s1, -self[3][2], s0]),
+                s * inner_product(&[self[2][0], s3, self[2][2], s0, -self[2][1], s1]),
+            ],
+        ];
+
+        Some(Matrix::new(inv))
     }
+}
+
+// for now, just multiplies normally. TODO: look into propagating error https://pbr-book.org/4ed/Utilities/Mathematical_Infrastructure#Error-FreeTransformations
+fn inner_product(nums: &[f32]) -> f32 {
+    nums.iter()
+        .map(|f| *f)
+        .reduce(|a, b| a * b)
+        .expect("Should not be empty")
 }
 
 impl Matrix<3> {
@@ -203,13 +280,16 @@ impl<const N: usize> Div<f32> for &Matrix<N> {
 mod test {
     use super::*;
 
+    const MAT4: [[f32; 4]; 4] = [
+        [3.5, 8.0, 6.0, 0.0],
+        [2.0, 4.0, 6.0, 0.0],
+        [5.0, 1.5, 7.0, 0.0],
+        [5.0, 1.5, 7.0, 0.0],
+    ];
+
     #[test]
     fn test_mat3_det() {
-        let m = Matrix::new([
-            [3.5, 8.0, 6.0],
-            [2.0, 4.0, 6.0],
-            [5.0, 1.5, 7.0],
-        ]);
+        let m = Matrix::new([[3.5, 8.0, 6.0], [2.0, 4.0, 6.0], [5.0, 1.5, 7.0]]);
 
         let expected = 92.5;
         let actual = m.determinant();
@@ -219,11 +299,7 @@ mod test {
 
     #[test]
     fn test_mat3_inv() {
-        let m = Matrix::new([
-            [3.5, 0.0, 0.0],
-            [0.0, 4.0, 0.0],
-            [0.0, 0.0, 7.0],
-        ]);
+        let m = Matrix::new([[3.5, 0.0, 0.0], [0.0, 4.0, 0.0], [0.0, 0.0, 7.0]]);
 
         let expected = Matrix::new([
             [3.5_f32.inv(), 0.0, 0.0],
@@ -233,14 +309,19 @@ mod test {
 
         let actual = m.inverse().unwrap();
 
-        assert!(eq_mat_approx(&expected, &actual), "Mismatched matrices: \nexpected = {:?}, \nactual = {:?}", expected, actual);
+        assert!(
+            eq_mat_approx(&expected, &actual),
+            "Mismatched matrices: \nexpected = {:?}, \nactual = {:?}",
+            expected,
+            actual
+        );
     }
 
     fn eq_mat_approx<const N: usize>(a: &Matrix<N>, b: &Matrix<N>) -> bool {
         for i in 0..N {
             for j in 0..N {
                 if (a[i][j] - b[i][j]) > f32::EPSILON {
-                    return false
+                    return false;
                 }
             }
         }
