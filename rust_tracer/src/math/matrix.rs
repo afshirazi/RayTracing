@@ -351,6 +351,58 @@ mod test {
         );
     }
 
+    #[test]
+    fn test_mat2_det() {
+        let m = Matrix::new([[3.5, 8.0], [2.0, 4.0]]);
+
+        let expected = -2.0;
+        let actual = m.determinant();
+
+        assert_eq!(expected, actual, "Expected {expected}, but got {actual}");
+    }
+
+    #[test]
+    fn test_mat2_inv() {
+        let m = Matrix::new([[3.5, 0.0], [0.0, 4.0]]);
+
+        let expected = Matrix::new([[3.5_f32.inv(), 0.0], [0.0, 4.0_f32.inv()]]);
+
+        let actual = m.inverse().unwrap();
+
+        assert!(
+            eq_mat_approx(&expected, &actual),
+            "Mismatched matrices: \nexpected = {:?}, \nactual = {:?}",
+            expected,
+            actual
+        );
+    }
+
+    #[test]
+    fn test_mat1_det() {
+        let m = Matrix::new([[5.0]]);
+
+        let expected = 5.0;
+        let actual = m.determinant();
+
+        assert_eq!(expected, actual, "Expected {expected}, but got {actual}");
+    }
+
+    #[test]
+    fn test_mat1_inv() {
+        let m = Matrix::new([[3.5]]);
+
+        let expected = Matrix::new([[3.5_f32.inv()]]);
+
+        let actual = m.inverse().unwrap();
+
+        assert!(
+            eq_mat_approx(&expected, &actual),
+            "Mismatched matrices: \nexpected = {:?}, \nactual = {:?}",
+            expected,
+            actual
+        );
+    }
+
     fn eq_mat_approx<const N: usize>(a: &Matrix<N>, b: &Matrix<N>) -> bool {
         for i in 0..N {
             for j in 0..N {
