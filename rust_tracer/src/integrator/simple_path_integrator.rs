@@ -51,7 +51,7 @@ impl Integrator for SimplePathIntegrator {
         let intr_obj = objects
             .iter()
             .map(|obj| (obj, obj.get_intersect(ray, origin)))
-            .filter(|(obj, intr)| src_obj.map_or(true, |src_obj| src_obj != *obj) && intr.is_some())
+            .filter(|(obj, intr)| (src_obj != Some(*obj)) && intr.is_some())
             .map(|(obj, intr)| (obj, intr.unwrap()))
             .min_by(|(_, lv), (_, rv)| {
                 let ld = Vec3::euclid_dist_sq(lv, origin);

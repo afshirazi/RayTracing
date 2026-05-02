@@ -38,7 +38,7 @@ impl Bxdf for DielectricBxdf {
     fn sample_f(&self, w_o: &Vec3, uc: f32, _u: (f32, f32)) -> Option<BsdfSample> {
         if self.effectively_smooth() {
             let w_i;
-            let p_refl = fresnel_dielectric(w_o.z as f32, self.eta);
+            let p_refl = fresnel_dielectric(w_o.z, self.eta);
             let p_trans = 1.0 - p_refl;
 
             let (f, pdf) = if uc < p_refl {
@@ -46,7 +46,7 @@ impl Bxdf for DielectricBxdf {
                 let refl_cos = p_refl / w_i.z.abs();
                 (Vec3::new(refl_cos, refl_cos, refl_cos), p_refl)
             } else {
-                w_i = refract(&w_o, &Vec3::new(0.0, 0.0, 1.0), self.eta)?;
+                w_i = refract(w_o, &Vec3::new(0.0, 0.0, 1.0), self.eta)?;
                 let trans_cos = p_trans / w_i.z.abs();
                 (Vec3::new(trans_cos, trans_cos, trans_cos), p_trans)
             };

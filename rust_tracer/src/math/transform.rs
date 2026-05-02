@@ -1,6 +1,5 @@
 use std::ops::Mul;
 
-use num::traits::Inv;
 
 use crate::math::{Vec3, matrix::Matrix};
 

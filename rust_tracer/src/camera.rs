@@ -59,7 +59,7 @@ impl Camera {
         let v = l.cross(&self.up).norm();
         let u = v.cross(&l);
 
-        let wh_ratio = w as f32 / h as f32;
+        let wh_ratio = w / h;
 
         let offset_x = (random::<f32>() - 0.5 + x) / w;
         let offset_y = (random::<f32>() - 0.5 + y) / h;
