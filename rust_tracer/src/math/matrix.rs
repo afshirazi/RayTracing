@@ -1,5 +1,5 @@
-use std::ops::{Add, Div, Index, IndexMut, Mul, Sub};
 use crate::math::difference_of_products;
+use std::ops::{Add, Div, Index, IndexMut, Mul, Sub};
 
 // templating the size is probably overkill but it's fun and I want to do it :)
 #[derive(Debug)]
@@ -266,6 +266,23 @@ impl<const N: usize> Mul<f32> for Matrix<N> {
     }
 }
 
+impl<const N: usize> Mul for &Matrix<N> {
+    type Output = Matrix<N>;
+
+    fn mul(self, rhs: Self) -> Self::Output {
+        let mut mat = [[0.0; N]; N];
+        for i in 0..N {
+            for j in 0..N {
+                for k in 0..N {
+                    mat[i][j] = f32::mul_add(self[i][k], rhs[k][j], mat[i][j]);
+                }
+            }
+        }
+
+        Matrix::new(mat)
+    }
+}
+
 impl<const N: usize> Div<f32> for &Matrix<N> {
     type Output = Matrix<N>;
 
@@ -405,6 +422,22 @@ mod test {
             expected,
             actual
         );
+    }
+
+    #[test]
+    fn test_mat_mul() {
+        let m1 = Matrix::new([[2.0, 3.0], [1.0, 8.0]]);
+        let m2 = Matrix::new([[1.0, 8.0], [2.0, 3.0]]);
+
+        let expected = Matrix::new([[8.0, 25.0], [16.0, 32.0]]);
+        let actual = &m1 * &m2;
+
+        assert!(
+            eq_mat_approx(&expected, &actual),
+            "Mismatched matrices: \nexpected = {:?}, \nactual = {:?}",
+            expected,
+            actual
+        )
     }
 
     fn eq_mat_approx<const N: usize>(a: &Matrix<N>, b: &Matrix<N>) -> bool {
