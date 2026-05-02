@@ -1,7 +1,4 @@
 use std::ops::{Add, Div, Index, IndexMut, Mul, Sub};
-
-use num::traits::Inv;
-
 use crate::math::difference_of_products;
 
 // templating the size is probably overkill but it's fun and I want to do it :)
@@ -78,7 +75,7 @@ impl Matrix<4> {
         if determinant == 0.0 {
             return None;
         }
-        let s = determinant.inv();
+        let s = determinant.recip();
 
         let inv = [
             [
@@ -138,7 +135,7 @@ impl Matrix<3> {
             return None;
         }
 
-        let inv_det = det.inv();
+        let inv_det = det.recip();
         let mut r = [[0.0; 3]; 3];
 
         r[0][0] = inv_det * difference_of_products(self[1][1], self[2][2], self[1][2], self[2][1]);
@@ -164,7 +161,7 @@ impl Matrix<2> {
         let det = self.determinant();
         if det != 0.0 {
             let tmp_mat = Matrix::new([[self[1][1], -self[0][1]], [-self[1][0], self[0][0]]]);
-            let inv_mat = tmp_mat * det.inv();
+            let inv_mat = tmp_mat * det.recip();
             Some(inv_mat)
         } else {
             None
@@ -181,7 +178,7 @@ impl Matrix<1> {
         if self[0][0] == 0.0 {
             None
         } else {
-            Some(Matrix::new([[self[0][0].inv()]]))
+            Some(Matrix::new([[self[0][0].recip()]]))
         }
     }
 }
@@ -302,7 +299,7 @@ mod test {
     }
 
     #[test]
-    fn test_mat4_inv() {
+    fn test_mat4_recip() {
         let m = Matrix::new([
             [3.5, 0.0, 0.0, 0.0],
             [0.0, 4.0, 0.0, 0.0],
@@ -311,9 +308,9 @@ mod test {
         ]);
 
         let expected = Matrix::new([
-            [3.5_f32.inv(), 0.0, 0.0, 0.0],
-            [0.0, 4.0_f32.inv(), 0.0, 0.0],
-            [0.0, 0.0, 7.0_f32.inv(), 0.0],
+            [3.5_f32.recip(), 0.0, 0.0, 0.0],
+            [0.0, 4.0_f32.recip(), 0.0, 0.0],
+            [0.0, 0.0, 7.0_f32.recip(), 0.0],
             [0.0, 0.0, 0.0, 1.0],
         ]);
 
@@ -338,13 +335,13 @@ mod test {
     }
 
     #[test]
-    fn test_mat3_inv() {
+    fn test_mat3_recip() {
         let m = Matrix::new([[3.5, 0.0, 0.0], [0.0, 4.0, 0.0], [0.0, 0.0, 7.0]]);
 
         let expected = Matrix::new([
-            [3.5_f32.inv(), 0.0, 0.0],
-            [0.0, 4.0_f32.inv(), 0.0],
-            [0.0, 0.0, 7.0_f32.inv()],
+            [3.5_f32.recip(), 0.0, 0.0],
+            [0.0, 4.0_f32.recip(), 0.0],
+            [0.0, 0.0, 7.0_f32.recip()],
         ]);
 
         let actual = m.inverse().unwrap();
@@ -368,10 +365,10 @@ mod test {
     }
 
     #[test]
-    fn test_mat2_inv() {
+    fn test_mat2_recip() {
         let m = Matrix::new([[3.5, 0.0], [0.0, 4.0]]);
 
-        let expected = Matrix::new([[3.5_f32.inv(), 0.0], [0.0, 4.0_f32.inv()]]);
+        let expected = Matrix::new([[3.5_f32.recip(), 0.0], [0.0, 4.0_f32.recip()]]);
 
         let actual = m.inverse().unwrap();
 
@@ -394,10 +391,10 @@ mod test {
     }
 
     #[test]
-    fn test_mat1_inv() {
+    fn test_mat1_recip() {
         let m = Matrix::new([[3.5]]);
 
-        let expected = Matrix::new([[3.5_f32.inv()]]);
+        let expected = Matrix::new([[3.5_f32.recip()]]);
 
         let actual = m.inverse().unwrap();
 
