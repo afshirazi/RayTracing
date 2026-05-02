@@ -12,13 +12,19 @@ pub struct Matrix<const N: usize> {
 
 impl<const N: usize> Default for Matrix<N> {
     fn default() -> Self {
-        Self::zero()
+        Self::identity()
     }
 }
 
 impl<const N: usize> Matrix<N> {
-    pub fn zero() -> Self {
-        Self { mat: [[0.0; N]; N] }
+    pub fn identity() -> Self {
+        let mut mat = [[0.0; N]; N];
+        for i in 0..N {
+            for j in 0..N {
+                mat[i][j] = if i == j { 1.0 } else { 0.0 };
+            }
+        }
+        Self { mat }
     }
 
     pub fn new(mat: [[f32; N]; N]) -> Self {
