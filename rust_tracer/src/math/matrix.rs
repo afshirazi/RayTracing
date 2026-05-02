@@ -192,8 +192,9 @@ where
     let mut ret = R::default();
 
     for i in 0..N {
+        ret[i] = 0.0;
         for j in 0..N {
-            ret[i] = mat[i][j] * v[i];
+            ret[i] += mat[i][j] * v[i];
         }
     }
     ret
