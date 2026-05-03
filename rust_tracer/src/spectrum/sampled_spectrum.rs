@@ -233,3 +233,16 @@ impl Div<f32> for SampledSpectrum {
         Self { values }
     }
 }
+
+impl Mul<&SampledSpectrum> for f32 {
+    type Output = SampledSpectrum;
+
+    fn mul(self, rhs: &SampledSpectrum) -> Self::Output {
+        let mut values = [0.0; N_SPECTRUM_SAMPLES];
+        for i in 0..N_SPECTRUM_SAMPLES {
+            values[i] = self * rhs[i];
+        }
+
+        SampledSpectrum { values }
+    }
+}
