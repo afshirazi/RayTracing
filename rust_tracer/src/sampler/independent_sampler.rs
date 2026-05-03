@@ -1,4 +1,4 @@
-use super::Sampler;
+use super::{Sample2d, Sampler};
 
 pub struct IndependentSampler; // TODO: add seed?
 
@@ -7,7 +7,7 @@ impl Sampler for IndependentSampler {
         rand::random()
     }
 
-    fn get_2d(&self) -> super::Sample2d {
+    fn get_2d(&self) -> Sample2d {
         (rand::random(), rand::random())
     }
 }
