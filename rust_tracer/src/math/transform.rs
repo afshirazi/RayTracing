@@ -112,7 +112,7 @@ impl Transform {
         Self { mat, inv_mat }
     }
 
-    pub fn apply_point(&self, p: Vec3) -> Vec3 {
+    pub fn apply_point(&self, p: &Vec3) -> Vec3 {
         let xp =
             self.mat[0][0] * p.x + self.mat[0][1] * p.y + self.mat[0][2] * p.z + self.mat[0][3];
         let yp =
@@ -129,7 +129,7 @@ impl Transform {
         }
     }
 
-    pub fn apply_vec(&self, v: Vec3) -> Vec3 {
+    pub fn apply_vec(&self, v: &Vec3) -> Vec3 {
         Vec3::new(
             self.mat[0][0] * v.x + self.mat[0][1] * v.y + self.mat[0][2] * v.z,
             self.mat[1][0] * v.x + self.mat[1][1] * v.y + self.mat[1][2] * v.z,
@@ -137,7 +137,7 @@ impl Transform {
         )
     }
 
-    pub fn apply_norm(&self, n: Vec3) -> Vec3 {
+    pub fn apply_norm(&self, n: &Vec3) -> Vec3 {
         Vec3::new(
             self.inv_mat[0][0] * n.x + self.inv_mat[1][0] * n.y + self.inv_mat[2][0] * n.z,
             self.inv_mat[0][1] * n.x + self.inv_mat[1][1] * n.y + self.inv_mat[2][1] * n.z,
