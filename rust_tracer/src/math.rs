@@ -6,11 +6,11 @@ mod vec3;
 use std::f32;
 
 pub use frame::Frame;
+pub use matrix::Matrix;
 use num::complex::Complex32;
+pub use transform::Transform;
 pub use vec3::Vec3;
 pub use vec3::reflect;
-pub use matrix::Matrix;
-pub use transform::Transform;
 
 pub fn sample_uniform_disk_concentric(u: (f32, f32)) -> (f32, f32) {
     let u_offset = (2.0 * u.0 - 1.0, 2.0 * u.1 - 1.0); // map to [-1, 1]^2

@@ -3,13 +3,20 @@ mod point_light;
 pub use point_light::PointLight;
 
 use crate::{
-    math::Vec3, sampler::Sample2d, spectrum::sampled_spectrum::{SampledSpectrum, SampledWavelengths}
+    math::Vec3,
+    sampler::Sample2d,
+    spectrum::sampled_spectrum::{SampledSpectrum, SampledWavelengths},
 };
 
 pub trait Light {
     fn phi(&self, lambdas: &SampledWavelengths) -> SampledSpectrum;
     fn ltype(&self) -> LightType;
-    fn sample_li(&self, ctx: &LightSampleContext, u: Sample2d, lambdas: &SampledWavelengths) -> Option<LightLiSample>;
+    fn sample_li(
+        &self,
+        ctx: &LightSampleContext,
+        u: Sample2d,
+        lambdas: &SampledWavelengths,
+    ) -> Option<LightLiSample>;
     fn pdf_li(&self, ctx: &LightSampleContext, w_i: Vec3) -> f32;
     /// Also referred to as L(). Should only be called when intersecting a light, i.e. light has geometry to it.
     // TODO: define point 2D and 3D and vec 2d?

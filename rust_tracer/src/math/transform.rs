@@ -1,6 +1,5 @@
 use std::ops::Mul;
 
-
 use crate::math::{Vec3, matrix::Matrix};
 
 #[derive(Default)]
