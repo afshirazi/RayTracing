@@ -5,7 +5,7 @@ use crate::{
     math::{Matrix, Transform, Vec3},
     sampler::Sample2d,
     spectrum::{
-        Spectrum,
+        MAX_LAMBDA, MIN_LAMBDA, Spectrum,
         densely_sampled_spectrum::DenselySampledSpectrum,
         sampled_spectrum::{SampledSpectrum, SampledWavelengths},
     },
@@ -15,18 +15,20 @@ use super::{LightLiSample, LightSampleContext, LightType};
 
 pub struct PointLight {
     pub pos: Vec3,
-    pub color: Vec3,
-    spectrum: Option<DenselySampledSpectrum>,
+    spectrum: DenselySampledSpectrum,
     scale: f32,
     transform: Transform,
 }
 
 impl PointLight {
-    pub fn new(pos: Vec3, color: Vec3) -> PointLight {
+    pub fn new(pos: Vec3, spectrum: impl Spectrum) -> PointLight {
         PointLight {
             pos,
-            color,
-            spectrum: None,
+            spectrum: DenselySampledSpectrum::new(
+                spectrum,
+                MIN_LAMBDA as usize,
+                MAX_LAMBDA as usize,
+            ),
             scale: 0.0,
             transform: Transform::new(Matrix::identity()),
         }
@@ -35,11 +37,7 @@ impl PointLight {
 
 impl Light for PointLight {
     fn phi(&self, lambdas: &SampledWavelengths) -> SampledSpectrum {
-        if let Some(spc) = self.spectrum.as_ref() {
-            4.0 * f32::consts::PI * self.scale * &spc.sample(lambdas)
-        } else {
-            SampledSpectrum::filled(0.0)
-        }
+        4.0 * f32::consts::PI * self.scale * &self.spectrum.sample(lambdas)
     }
 
     fn ltype(&self) -> LightType {
@@ -55,8 +53,8 @@ impl Light for PointLight {
     ) -> Option<LightLiSample> {
         let point = self.transform.apply_point(&Vec3::empty_vec());
         let w_i = (&point - &ctx.point).norm();
-        let li = self.spectrum.as_ref()?.sample(lambdas) * self.scale
-            / Vec3::euclid_dist_sq(&point, &ctx.point);
+        let li =
+            self.spectrum.sample(lambdas) * self.scale / Vec3::euclid_dist_sq(&point, &ctx.point);
         Some(LightLiSample::new(li, w_i, 1.0))
     }
 
