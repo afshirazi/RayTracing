@@ -76,9 +76,9 @@ impl PartialEq for Circle {
 
 #[cfg(test)]
 mod test {
-    use crate::bxdf::{
+    use crate::{bxdf::{
         conductor_bxdf::ConductorBxdf, trowbridge_reitz_distribution::TrowbridgeReitzDistribution,
-    };
+    }, spectrum::sampled_spectrum::SampledSpectrum};
 
     use super::*;
 
@@ -86,8 +86,8 @@ mod test {
     fn test_intersect_success() {
         let bxdf = ConductorBxdf::new(
             TrowbridgeReitzDistribution::zero(),
-            Vec3::empty_vec(),
-            Vec3::empty_vec(),
+            SampledSpectrum::filled(0.0),
+            SampledSpectrum::filled(0.0),
         );
         let c = Circle::from_color(Vec3::new(0.0, 0.0, -4.0), 2.0, Bxdfs::Conductor(bxdf));
 
@@ -104,8 +104,8 @@ mod test {
     fn test_intersect_fail() {
         let bxdf = ConductorBxdf::new(
             TrowbridgeReitzDistribution::zero(),
-            Vec3::empty_vec(),
-            Vec3::empty_vec(),
+            SampledSpectrum::filled(0.0),
+            SampledSpectrum::filled(0.0),
         );
         let c = Circle::from_color(Vec3::new(0.0, 0.0, -4.0), 2.0, Bxdfs::Conductor(bxdf));
 

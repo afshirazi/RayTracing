@@ -5,6 +5,7 @@ use crate::{
     spectrum::{MAX_LAMBDA, MIN_LAMBDA, N_SPECTRUM_SAMPLES},
 };
 
+#[derive(Clone)]
 pub struct SampledSpectrum {
     values: [f32; N_SPECTRUM_SAMPLES],
 }

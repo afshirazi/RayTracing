@@ -2,26 +2,26 @@ use std::f32;
 
 use crate::{
     bxdf::{BsdfSample, Bxdf, BxdfFlags},
-    math::{self, Vec3},
+    math::{self, Vec3}, spectrum::sampled_spectrum::SampledSpectrum,
 };
 
 #[derive(Clone)]
 pub struct DiffuseBxdf {
-    color: Vec3,
+    reflectance: SampledSpectrum,
 }
 
 impl DiffuseBxdf {
-    pub fn new(color: Vec3) -> Self {
-        Self { color }
+    pub fn new(reflectance: SampledSpectrum) -> Self {
+        Self { reflectance }
     }
 }
 
 impl Bxdf for DiffuseBxdf {
-    fn f(&self, w_o: &Vec3, w_i: &Vec3) -> Vec3 {
+    fn f(&self, w_o: &Vec3, w_i: &Vec3) -> SampledSpectrum {
         if super::same_hemisphere(w_o, w_i) {
-            &self.color * f32::consts::FRAC_1_PI
+            &self.reflectance * f32::consts::FRAC_1_PI
         } else {
-            Vec3::empty_vec()
+            SampledSpectrum::filled(0.0)
         }
     }
 
@@ -33,7 +33,7 @@ impl Bxdf for DiffuseBxdf {
         }
         let pdf = math::cosine_hemisphere_pdf(w_i.z.abs() as f32);
         Some(BsdfSample::new(
-            &self.color * f32::consts::FRAC_1_PI,
+            &self.reflectance * f32::consts::FRAC_1_PI,
             w_i,
             pdf,
             self.flags(),

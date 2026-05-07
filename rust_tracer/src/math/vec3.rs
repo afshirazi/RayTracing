@@ -83,6 +83,8 @@ impl Index<usize> for Vec3 {
 }
 
 pub mod reflect {
+    use crate::spectrum::{N_SPECTRUM_SAMPLES, sampled_spectrum::SampledSpectrum};
+
     use super::*;
 
     /// Reflects `w_i`` around `n`. Expects `n` to be normalized.
@@ -151,14 +153,17 @@ pub mod reflect {
         (r_parl.norm_sqr() + r_perp.norm_sqr()) / 2.0
     }
 
-    pub fn fresnel_complex_spec(cos_theta_i: f32, eta: &Vec3, k: &Vec3) -> Vec3 {
-        let mut res = Vec3::empty_vec();
-        // TODO: clean up (Vec3 -> SampledSpectrum, build the result more dynamically)
-        res.x = fresnel_complex(cos_theta_i, Complex32::new(eta.x, k.x));
-        res.y = fresnel_complex(cos_theta_i, Complex32::new(eta.y, k.y));
-        res.z = fresnel_complex(cos_theta_i, Complex32::new(eta.z, k.z));
+    pub fn fresnel_complex_spec(
+        cos_theta_i: f32,
+        eta: &SampledSpectrum,
+        k: &SampledSpectrum,
+    ) -> SampledSpectrum {
+        let mut res = [0.0; N_SPECTRUM_SAMPLES];
+        for i in 0..N_SPECTRUM_SAMPLES {
+            res[i] = fresnel_complex(cos_theta_i, Complex32::new(eta[i], k[i]));
+        }
 
-        res
+        SampledSpectrum::new(res)
     }
 }
 

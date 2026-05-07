@@ -4,7 +4,7 @@ use crate::{
     bxdf::{
         conductor_bxdf::ConductorBxdf, dielectric_bxdf::DielectricBxdf, diffuse_bxdf::DiffuseBxdf,
     },
-    math::{Frame, Vec3},
+    math::{Frame, Vec3}, spectrum::sampled_spectrum::SampledSpectrum,
 };
 
 pub mod conductor_bxdf;
@@ -25,14 +25,14 @@ pub struct Bsdf {
 }
 
 pub struct BsdfSample {
-    pub color: Vec3,
+    pub color: SampledSpectrum,
     pub w_i: Vec3,
     pub pdf: f32,
     flags: BxdfFlags,
 }
 
 impl BsdfSample {
-    pub fn new(color: Vec3, w_i: Vec3, pdf: f32, flags: BxdfFlags) -> Self {
+    pub fn new(color: SampledSpectrum, w_i: Vec3, pdf: f32, flags: BxdfFlags) -> Self {
         Self {
             color,
             w_i,
@@ -87,7 +87,7 @@ impl BxdfFlags {
 }
 
 pub trait Bxdf {
-    fn f(&self, w_o: &Vec3, w_i: &Vec3) -> Vec3; // gonna change to sampled spectrum once I figure that out
+    fn f(&self, w_o: &Vec3, w_i: &Vec3) -> SampledSpectrum;
     fn sample_f(&self, w_o: &Vec3, uc: f32, u: (f32, f32)) -> Option<BsdfSample>;
     //fn pdf();
     fn flags(&self) -> BxdfFlags;
@@ -103,7 +103,7 @@ impl Bsdf {
 }
 
 impl Bxdf for Bsdf {
-    fn f(&self, w_o: &Vec3, w_i: &Vec3) -> Vec3 {
+    fn f(&self, w_o: &Vec3, w_i: &Vec3) -> SampledSpectrum {
         let local_w_o = self.frame.render_to_local(w_o);
         let local_w_i = self.frame.render_to_local(w_i);
         self.bxdf.f(&local_w_o, &local_w_i)
@@ -125,7 +125,7 @@ impl Bxdf for Bsdf {
 }
 
 impl Bxdf for Bxdfs {
-    fn f(&self, w_o: &Vec3, w_i: &Vec3) -> Vec3 {
+    fn f(&self, w_o: &Vec3, w_i: &Vec3) -> SampledSpectrum {
         match self {
             Bxdfs::Diffuse(diffuse_bxdf) => diffuse_bxdf.f(w_o, w_i),
             Bxdfs::Conductor(conductor_bxdf) => conductor_bxdf.f(w_o, w_i),

@@ -1,6 +1,6 @@
 use crate::{
     bxdf::{BsdfSample, Bxdf, trowbridge_reitz_distribution::TrowbridgeReitzDistribution},
-    math::{Vec3, reflect::fresnel_complex_spec},
+    math::{Vec3, reflect::fresnel_complex_spec}, spectrum::sampled_spectrum::SampledSpectrum,
 };
 
 use super::BxdfFlags;
@@ -8,12 +8,12 @@ use super::BxdfFlags;
 #[derive(Clone)]
 pub struct ConductorBxdf {
     microfacet_distrib: TrowbridgeReitzDistribution,
-    eta: Vec3,
-    k: Vec3,
+    eta: SampledSpectrum,
+    k: SampledSpectrum,
 }
 
 impl ConductorBxdf {
-    pub fn new(microfacet_distrib: TrowbridgeReitzDistribution, eta: Vec3, k: Vec3) -> Self {
+    pub fn new(microfacet_distrib: TrowbridgeReitzDistribution, eta: SampledSpectrum, k: SampledSpectrum) -> Self {
         Self {
             microfacet_distrib,
             eta,
@@ -27,9 +27,9 @@ impl ConductorBxdf {
 }
 
 impl Bxdf for ConductorBxdf {
-    fn f(&self, _w_o: &Vec3, _w_i: &Vec3) -> Vec3 {
+    fn f(&self, _w_o: &Vec3, _w_i: &Vec3) -> SampledSpectrum {
         if self.effectively_smooth() {
-            return Vec3::empty_vec();
+            return SampledSpectrum::filled(0.0);
         }
         unimplemented!("WIP, dependent on microfacet distribution work")
     }

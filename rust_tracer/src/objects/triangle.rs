@@ -1,6 +1,6 @@
 use crate::{
     bxdf::{Bsdf, Bxdfs, diffuse_bxdf::DiffuseBxdf},
-    math::Vec3,
+    math::Vec3, spectrum::sampled_spectrum::SampledSpectrum,
 };
 
 use super::RayOps;
@@ -9,16 +9,16 @@ pub struct Triangle {
     a: Vec3,
     b: Vec3,
     c: Vec3,
-    diff: Vec3,
+    reflectance: SampledSpectrum,
 }
 
 impl Triangle {
-    pub fn from_color(a: Vec3, b: Vec3, c: Vec3, color: &Vec3) -> Triangle {
+    pub fn from_color(a: Vec3, b: Vec3, c: Vec3, reflectance: SampledSpectrum) -> Triangle {
         Triangle {
             a,
             b,
             c,
-            diff: color * 0.4,
+            reflectance,
         }
     }
 }
@@ -76,7 +76,7 @@ impl RayOps for Triangle {
     }
 
     fn get_mat(&self, norm: &Vec3, dpdu: &Vec3) -> Bsdf {
-        let bxdf = DiffuseBxdf::new(self.diff.clone());
+        let bxdf = DiffuseBxdf::new(self.reflectance.clone());
         Bsdf::new(norm.clone(), dpdu.clone(), Bxdfs::Diffuse(bxdf))
     }
 }
@@ -98,7 +98,7 @@ mod test {
             Vec3::new(2.0, -3.0, -10.0),
             Vec3::new(0.0, 1.5, -11.0),
             Vec3::new(-1.5, -3.0, -9.0),
-            &Vec3::new(0.4, 0.2, 0.76),
+            SampledSpectrum::new([0.4, 0.2, 0.76, 0.8]),
         );
 
         let ray = Vec3::new(0.0, 0.0, -1.0);

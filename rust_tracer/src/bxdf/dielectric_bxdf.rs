@@ -3,7 +3,7 @@ use crate::{
     math::{
         Vec3,
         reflect::{fresnel_dielectric, refract},
-    },
+    }, spectrum::sampled_spectrum::SampledSpectrum,
 };
 
 use super::BxdfFlags;
@@ -28,9 +28,9 @@ impl DielectricBxdf {
 }
 
 impl Bxdf for DielectricBxdf {
-    fn f(&self, _w_o: &Vec3, _w_i: &Vec3) -> Vec3 {
+    fn f(&self, _w_o: &Vec3, _w_i: &Vec3) -> SampledSpectrum {
         if self.effectively_smooth() {
-            return Vec3::empty_vec();
+            return SampledSpectrum::filled(0.0);
         }
         unimplemented!("WIP, dependent on microfacet distribution work")
     }
@@ -44,11 +44,11 @@ impl Bxdf for DielectricBxdf {
             let (f, pdf) = if uc < p_refl {
                 w_i = Vec3::new(-w_o.x, -w_o.y, w_o.z);
                 let refl_cos = p_refl / w_i.z.abs();
-                (Vec3::new(refl_cos, refl_cos, refl_cos), p_refl)
+                (SampledSpectrum::filled(refl_cos), p_refl)
             } else {
                 w_i = refract(w_o, &Vec3::new(0.0, 0.0, 1.0), self.eta)?;
                 let trans_cos = p_trans / w_i.z.abs();
-                (Vec3::new(trans_cos, trans_cos, trans_cos), p_trans)
+                (SampledSpectrum::filled(trans_cos), p_trans)
             };
 
             return Some(BsdfSample::new(f, w_i, pdf, self.flags()));
