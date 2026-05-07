@@ -1,10 +1,10 @@
 use crate::{
     bxdf::Bxdf,
     integrator::Integrator,
-    light::PointLight,
+    light::{Light, LightSampleContext, PointLight},
     math::Vec3,
     objects::{Object, RayOps},
-    sampler::Sampler,
+    sampler::Sampler, spectrum::{N_SPECTRUM_SAMPLES, sampled_spectrum::{SampledSpectrum, SampledWavelengths}},
 };
 
 pub struct SimplePathIntegrator;
@@ -40,13 +40,14 @@ impl Integrator for SimplePathIntegrator {
     fn incident_radiance(
         ray: &Vec3,
         origin: &Vec3,
+        lambdas: &SampledWavelengths,
         sampler: &impl Sampler,
         objects: &[Object],
         lights: &[PointLight],
         src_obj: Option<&Object>,
         depth: u8,
-    ) -> Vec3 {
-        let mut color_buf = Vec3::new(0.0, 0.0, 0.0);
+    ) -> SampledSpectrum {
+        let mut color_buf = SampledSpectrum::new([0.0; N_SPECTRUM_SAMPLES]);
 
         let intr_obj = objects
             .iter()
@@ -61,7 +62,7 @@ impl Integrator for SimplePathIntegrator {
             .map(|(obj, _)| obj);
 
         if intr_obj.is_none() {
-            return Vec3::new(0.3, 0.3, 0.3);
+            return SampledSpectrum::filled(0.3);
         }
 
         let intr_obj = intr_obj.unwrap();
@@ -73,12 +74,16 @@ impl Integrator for SimplePathIntegrator {
         let w_o = ray * -1.0;
 
         let vis_lights = Self::shadow_rays(&intr_point, intr_obj, objects, lights);
+        let ctx = LightSampleContext::new(intr_point.clone(), normal.clone());
 
         for light in vis_lights {
             let light_dir = (&light.pos - &intr_point).norm();
 
-            let sample_spectrum = bsdf.f(&w_o, &light_dir);
-            color_buf += light.color.elwise_mul(&sample_spectrum) / 1.0; // I know I divide by 1 here but that's cuz point light and delta distribution and whatever man it's written in the book
+            let bsdf_lookup = bsdf.f(&w_o, &light_dir);
+            let li_sample = light.sample_li(&ctx, sampler.get_2d(), lambdas);
+            if let Some(ls) = li_sample && ls.pdf > 0.0 {
+                color_buf += ls.radiance * bsdf_lookup / ls.pdf;
+            }
         }
 
         let bs = bsdf.sample_f(&w_o, sampler.get_1d(), sampler.get_2d());
@@ -89,13 +94,14 @@ impl Integrator for SimplePathIntegrator {
             color_buf += Self::incident_radiance(
                 &bs.w_i,
                 &intr_point,
+                lambdas,
                 sampler,
                 objects,
                 lights,
                 Some(intr_obj),
                 depth - 1,
             )
-            .elwise_mul(&beta);
+             * beta;
         }
 
         color_buf

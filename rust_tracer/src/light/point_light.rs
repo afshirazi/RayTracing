@@ -21,7 +21,7 @@ pub struct PointLight {
 }
 
 impl PointLight {
-    pub fn new(pos: Vec3, spectrum: impl Spectrum) -> PointLight {
+    pub fn new(pos: Vec3, scale: f32, spectrum: impl Spectrum) -> PointLight {
         PointLight {
             pos,
             spectrum: DenselySampledSpectrum::new(
@@ -29,7 +29,7 @@ impl PointLight {
                 MIN_LAMBDA as usize,
                 MAX_LAMBDA as usize,
             ),
-            scale: 0.0,
+            scale,
             transform: Transform::new(Matrix::identity()),
         }
     }
@@ -44,7 +44,6 @@ impl Light for PointLight {
         LightType::DeltaPosition
     }
 
-    //TODO: remove optional spectrum
     fn sample_li(
         &self,
         ctx: &LightSampleContext,

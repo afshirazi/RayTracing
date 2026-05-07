@@ -2,6 +2,7 @@ use crate::light::PointLight;
 use crate::math::Vec3;
 use crate::objects::Object;
 use crate::sampler::Sampler;
+use crate::spectrum::sampled_spectrum::{SampledSpectrum, SampledWavelengths};
 
 pub mod simple_path_integrator;
 
@@ -17,10 +18,11 @@ pub trait Integrator {
     fn incident_radiance(
         ray: &Vec3,
         origin: &Vec3,
-        /*sampled wavelengths, */ sampler: &impl Sampler,
+        sampled_wavelengths: &SampledWavelengths,
+         sampler: &impl Sampler,
         objects: &[Object],
         lights: &[PointLight],
         src_obj: Option<&Object>,
         depth: u8,
-    ) -> Vec3;
+    ) -> SampledSpectrum;
 }
