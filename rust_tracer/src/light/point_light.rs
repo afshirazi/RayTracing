@@ -21,7 +21,7 @@ pub struct PointLight {
 }
 
 impl PointLight {
-    pub fn new(pos: Vec3, scale: f32, spectrum: impl Spectrum) -> PointLight {
+    pub fn new(pos: Vec3, scale: f32, spectrum: &impl Spectrum) -> PointLight {
         PointLight {
             pos,
             spectrum: DenselySampledSpectrum::new(

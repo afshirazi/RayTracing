@@ -6,7 +6,7 @@ use crate::{
     light::PointLight,
     math::Vec3,
     objects::Object,
-    sampler::IndependentSampler,
+    sampler::IndependentSampler, spectrum::sampled_spectrum::SampledWavelengths,
 };
 
 pub struct Camera {
@@ -30,7 +30,7 @@ impl Camera {
         }
     }
 
-    pub fn render(&self, objects: &[Object], lights: &[PointLight], img: &mut RgbImage) {
+    pub fn render(&self, objects: &[Object], lights: &[PointLight], lambdas: &SampledWavelengths, img: &mut RgbImage) {
         let li = SimplePathIntegrator::incident_radiance;
         let sampler = IndependentSampler;
         // TODO: ^^^refactor out of here
@@ -39,7 +39,10 @@ impl Camera {
             let mut px_color = Vec3::empty_vec();
             for _ in 0..self.samples_per_px {
                 let ray = self.get_randomized_ray(x, y, 1600, 900);
-                px_color += li(&ray, &self.eye, &sampler, objects, lights, None, 5);
+                let radiance = li(&ray, &self.eye, lambdas, &sampler, objects, lights, None, 5);
+                px_color.x += radiance[0];
+                px_color.y += radiance[1];
+                px_color.z += radiance[2];
             }
             px_color = px_color * self.sample_scale;
 
