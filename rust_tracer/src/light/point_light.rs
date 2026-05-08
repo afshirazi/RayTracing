@@ -22,6 +22,7 @@ pub struct PointLight {
 
 impl PointLight {
     pub fn new(pos: Vec3, scale: f32, spectrum: &impl Spectrum) -> PointLight {
+        let transform = Transform::translate(&-&pos);
         PointLight {
             pos,
             spectrum: DenselySampledSpectrum::new(
@@ -30,7 +31,7 @@ impl PointLight {
                 MAX_LAMBDA as usize,
             ),
             scale,
-            transform: Transform::new(Matrix::identity()),
+            transform,
         }
     }
 }

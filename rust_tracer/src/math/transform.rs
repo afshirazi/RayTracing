@@ -23,7 +23,7 @@ impl Transform {
         Self { mat, inv_mat }
     }
 
-    pub fn translate(delta: Vec3) -> Self {
+    pub fn translate(delta: &Vec3) -> Self {
         let mat = Matrix::new([
             [1.0, 0.0, 0.0, delta.x],
             [0.0, 1.0, 0.0, delta.y],
