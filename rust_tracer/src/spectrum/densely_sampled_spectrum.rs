@@ -13,7 +13,7 @@ pub struct DenselySampledSpectrum {
 
 impl DenselySampledSpectrum {
     pub fn new(other: &impl Spectrum, lambda_min: usize, lambda_max: usize) -> Self {
-        let mut values = Vec::with_capacity(lambda_max - lambda_min + 1);
+        let mut values = vec![0.0; (lambda_max - lambda_min + 1)];
         for lambda in lambda_min..lambda_max {
             values[lambda - lambda_min] = other.index(lambda as f32);
         }
