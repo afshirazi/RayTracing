@@ -1,6 +1,7 @@
 use crate::{
     bxdf::{Bsdf, Bxdfs, diffuse_bxdf::DiffuseBxdf},
-    math::Vec3, spectrum::sampled_spectrum::SampledSpectrum,
+    math::Vec3,
+    spectrum::sampled_spectrum::SampledSpectrum,
 };
 
 use super::RayOps;

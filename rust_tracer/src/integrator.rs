@@ -19,7 +19,7 @@ pub trait Integrator {
         ray: &Vec3,
         origin: &Vec3,
         sampled_wavelengths: &SampledWavelengths,
-         sampler: &impl Sampler,
+        sampler: &impl Sampler,
         objects: &[Object],
         lights: &[PointLight],
         src_obj: Option<&Object>,

@@ -76,9 +76,13 @@ impl PartialEq for Circle {
 
 #[cfg(test)]
 mod test {
-    use crate::{bxdf::{
-        conductor_bxdf::ConductorBxdf, trowbridge_reitz_distribution::TrowbridgeReitzDistribution,
-    }, spectrum::sampled_spectrum::SampledSpectrum};
+    use crate::{
+        bxdf::{
+            conductor_bxdf::ConductorBxdf,
+            trowbridge_reitz_distribution::TrowbridgeReitzDistribution,
+        },
+        spectrum::sampled_spectrum::SampledSpectrum,
+    };
 
     use super::*;
 

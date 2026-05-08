@@ -6,7 +6,8 @@ use crate::{
     light::PointLight,
     math::Vec3,
     objects::Object,
-    sampler::IndependentSampler, spectrum::sampled_spectrum::SampledWavelengths,
+    sampler::IndependentSampler,
+    spectrum::sampled_spectrum::SampledWavelengths,
 };
 
 pub struct Camera {
@@ -30,7 +31,13 @@ impl Camera {
         }
     }
 
-    pub fn render(&self, objects: &[Object], lights: &[PointLight], lambdas: &SampledWavelengths, img: &mut RgbImage) {
+    pub fn render(
+        &self,
+        objects: &[Object],
+        lights: &[PointLight],
+        lambdas: &SampledWavelengths,
+        img: &mut RgbImage,
+    ) {
         let li = SimplePathIntegrator::incident_radiance;
         let sampler = IndependentSampler;
         // TODO: ^^^refactor out of here

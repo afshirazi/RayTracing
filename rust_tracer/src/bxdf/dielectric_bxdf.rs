@@ -3,7 +3,8 @@ use crate::{
     math::{
         Vec3,
         reflect::{fresnel_dielectric, refract},
-    }, spectrum::sampled_spectrum::SampledSpectrum,
+    },
+    spectrum::sampled_spectrum::SampledSpectrum,
 };
 
 use super::BxdfFlags;

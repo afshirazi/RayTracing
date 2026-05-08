@@ -9,7 +9,10 @@ use crate::{
         Bxdfs, conductor_bxdf::ConductorBxdf, dielectric_bxdf::DielectricBxdf,
         trowbridge_reitz_distribution::TrowbridgeReitzDistribution,
     },
-    spectrum::{piecewise_linear_spectrum::PiecewiseLinearSpectrum, sampled_spectrum::{SampledSpectrum, SampledWavelengths}},
+    spectrum::{
+        piecewise_linear_spectrum::PiecewiseLinearSpectrum,
+        sampled_spectrum::{SampledSpectrum, SampledWavelengths},
+    },
 };
 
 mod bxdf;
@@ -31,7 +34,8 @@ fn main() {
         SampledSpectrum::new([3.1, 2.8, 2.0, 0.0]),
     );
     let lambdas = SampledWavelengths::sample_uniform(rand::random(), None, None);
-    let piecewise_spec = PiecewiseLinearSpectrum::new(vec![400., 500., 600., 700.], vec![0.85, 0.43, 0.16, 0.52]);
+    let piecewise_spec =
+        PiecewiseLinearSpectrum::new(vec![400., 500., 600., 700.], vec![0.85, 0.43, 0.16, 0.52]);
 
     let objects = vec![
         Object::Circle(Circle::from_color(

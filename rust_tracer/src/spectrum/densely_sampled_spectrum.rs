@@ -25,7 +25,6 @@ impl DenselySampledSpectrum {
     }
 }
 
-
 impl Spectrum for DenselySampledSpectrum {
     fn max_value(&self) -> f32 {
         self.values
@@ -40,7 +39,7 @@ impl Spectrum for DenselySampledSpectrum {
         }
         s
     }
-    
+
     fn index(&self, lambda: f32) -> f32 {
         let offset = lambda.round() as usize - self.lambda_min;
         if offset > self.values.len() {

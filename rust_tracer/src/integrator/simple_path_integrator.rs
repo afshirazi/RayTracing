@@ -4,7 +4,11 @@ use crate::{
     light::{Light, LightSampleContext, PointLight},
     math::Vec3,
     objects::{Object, RayOps},
-    sampler::Sampler, spectrum::{N_SPECTRUM_SAMPLES, sampled_spectrum::{SampledSpectrum, SampledWavelengths}},
+    sampler::Sampler,
+    spectrum::{
+        N_SPECTRUM_SAMPLES,
+        sampled_spectrum::{SampledSpectrum, SampledWavelengths},
+    },
 };
 
 pub struct SimplePathIntegrator;
@@ -81,7 +85,9 @@ impl Integrator for SimplePathIntegrator {
 
             let bsdf_lookup = bsdf.f(&w_o, &light_dir);
             let li_sample = light.sample_li(&ctx, sampler.get_2d(), lambdas);
-            if let Some(ls) = li_sample && ls.pdf > 0.0 {
+            if let Some(ls) = li_sample
+                && ls.pdf > 0.0
+            {
                 color_buf += ls.radiance * bsdf_lookup / ls.pdf;
             }
         }
@@ -100,8 +106,7 @@ impl Integrator for SimplePathIntegrator {
                 lights,
                 Some(intr_obj),
                 depth - 1,
-            )
-             * beta;
+            ) * beta;
         }
 
         color_buf

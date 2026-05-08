@@ -2,7 +2,8 @@ use std::f32;
 
 use crate::{
     bxdf::{BsdfSample, Bxdf, BxdfFlags},
-    math::{self, Vec3}, spectrum::sampled_spectrum::SampledSpectrum,
+    math::{self, Vec3},
+    spectrum::sampled_spectrum::SampledSpectrum,
 };
 
 #[derive(Clone)]

@@ -1,6 +1,7 @@
 use crate::{
     bxdf::{BsdfSample, Bxdf, trowbridge_reitz_distribution::TrowbridgeReitzDistribution},
-    math::{Vec3, reflect::fresnel_complex_spec}, spectrum::sampled_spectrum::SampledSpectrum,
+    math::{Vec3, reflect::fresnel_complex_spec},
+    spectrum::sampled_spectrum::SampledSpectrum,
 };
 
 use super::BxdfFlags;
@@ -13,7 +14,11 @@ pub struct ConductorBxdf {
 }
 
 impl ConductorBxdf {
-    pub fn new(microfacet_distrib: TrowbridgeReitzDistribution, eta: SampledSpectrum, k: SampledSpectrum) -> Self {
+    pub fn new(
+        microfacet_distrib: TrowbridgeReitzDistribution,
+        eta: SampledSpectrum,
+        k: SampledSpectrum,
+    ) -> Self {
         Self {
             microfacet_distrib,
             eta,

@@ -4,7 +4,8 @@ use crate::{
     bxdf::{
         conductor_bxdf::ConductorBxdf, dielectric_bxdf::DielectricBxdf, diffuse_bxdf::DiffuseBxdf,
     },
-    math::{Frame, Vec3}, spectrum::sampled_spectrum::SampledSpectrum,
+    math::{Frame, Vec3},
+    spectrum::sampled_spectrum::SampledSpectrum,
 };
 
 pub mod conductor_bxdf;
