@@ -2,7 +2,7 @@ use std::f32;
 
 use crate::{
     light::Light,
-    math::{Matrix, Transform, Vec3},
+    math::{Transform, Vec3},
     sampler::Sample2d,
     spectrum::{
         MAX_LAMBDA, MIN_LAMBDA, Spectrum,

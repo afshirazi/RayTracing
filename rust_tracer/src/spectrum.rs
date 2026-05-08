@@ -1,4 +1,3 @@
-use std::ops::Index;
 
 use sampled_spectrum::SampledSpectrum;
 use sampled_spectrum::SampledWavelengths;
